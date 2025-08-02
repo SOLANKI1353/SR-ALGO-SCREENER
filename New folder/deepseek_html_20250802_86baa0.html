@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SR Algo Screener Pro - Enhanced Stock Analysis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray: #64748b;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --oversold: rgba(16, 185, 129, 0.2);
+            --overbought: rgba(239, 68, 68, 0.2);
+            --neutral: rgba(59, 130, 246, 0.2);
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        /* Header and Navigation */
+        .header {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+        }
+
+        /* Main Content Layout */
+        .main-content {
+            display: flex;
+            flex: 1;
+            padding: 20px 0;
+        }
+
+        .dashboard-content {
+            flex: 1;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+        }
+
+        /* Stock Screener Table */
+        .screener-filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .screener-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .screener-table th {
+            text-align: left;
+            padding: 15px;
+            font-weight: 600;
+            color: #94a3b8;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .screener-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stock-symbol {
+            font-weight: 600;
+            color: white;
+        }
+
+        .stock-change.positive {
+            color: var(--success);
+        }
+
+        .stock-change.negative {
+            color: var(--danger);
+        }
+
+        /* Signal tags */
+        .signal-tag {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .signal-tag.oversold {
+            background: var(--oversold);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.5);
+        }
+        
+        .signal-tag.overbought {
+            background: var(--overbought);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.5);
+        }
+        
+        .signal-tag.neutral {
+            background: var(--neutral);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.5);
+        }
+
+        /* Top Movers */
+        .top-movers-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .mover-card {
+            background: rgba(15, 23, 42, 0.4);
+            border-radius: 12px;
+            padding: 15px;
+            transition: all 0.3s;
+        }
+        
+        .mover-stock {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Sector Heat Map */
+        .heatmap-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .heatmap-item {
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .heatmap-item.positive {
+            background: linear-gradient(to bottom, rgba(16, 185, 129, 0.3), rgba(16, 185, 129, 0.1));
+            border: 1px solid rgba(16, 185, 129, 0.4);
+        }
+        
+        .heatmap-item.negative {
+            background: linear-gradient(to bottom, rgba(239, 68, 68, 0.3), rgba(239, 68, 68, 0.1));
+            border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+        
+        .heatmap-item.neutral {
+            background: linear-gradient(to bottom, rgba(59, 130, 246, 0.3), rgba(59, 130, 246, 0.1));
+            border: 1px solid rgba(59, 130, 246, 0.4);
+        }
+
+        /* Portfolio Management */
+        .portfolio-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .portfolio-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        /* Educational Resources */
+        .education-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .edu-item {
+            background: rgba(15, 23, 42, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .edu-item:hover {
+            transform: translateY(-5px);
+            background: rgba(37, 99, 235, 0.2);
+        }
+
+        /* Technical Analysis Tools */
+        .ta-tools {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .ta-tool {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .ta-tool:hover {
+            background: rgba(37, 99, 235, 0.4);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .top-movers-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .portfolio-form {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .heatmap-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .screener-filters {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        /* Tooltips */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: rgba(30, 41, 59, 0.9);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Performance Optimization */
+        .table-scroller {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        /* Progress Bar */
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        
+        .progress {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard">
+        <!-- Header -->
+        <header class="header">
+            <div class="container header-content">
+                <div class="header-left">
+                    <div class="header-logo">
+                        <i class="fas fa-chart-line"></i>
+                        <span>SR ALGO SCREENER PRO</span>
+                    </div>
+                </div>
+                
+                <div class="header-right">
+                    <div class="user-actions">
+                        <div class="notification-btn">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge">3</span>
+                        </div>
+                        <div class="user-btn" id="userMenuBtn">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content container">
+            <!-- Dashboard Content -->
+            <main class="dashboard-content">
+                <div class="dashboard-grid">
+                    <!-- Portfolio Management -->
+                    <div class="card fade-in">
+                        <div class="card-header">
+                            <h3 class="card-title">My Portfolio</h3>
+                            <div class="card-actions">
+                                <button class="card-btn" id="addStockBtn"><i class="fas fa-plus"></i></button>
+                                <button class="card-btn" id="refreshPortfolioBtn"><i class="fas fa-sync"></i></button>
+                            </div>
+                        </div>
+                        <div id="portfolioContainer">
+                            <div class="portfolio-item">
+                                <div>
+                                    <div class="stock-symbol">RELIANCE</div>
+                                    <div>50 Shares</div>
+                                </div>
+                                <div>
+                                    <div>₹2520.32</div>
+                                    <div class="stock-change positive">+2.35%</div>
+                                </div>
+                            </div>
+                            <div class="portfolio-item">
+                                <div>
+                                    <div class="stock-symbol">HDFCBANK</div>
+                                    <div>30 Shares</div>
+                                </div>
+                                <div>
+                                    <div>₹1635.67</div>
+                                    <div class="stock-change positive">+1.23%</div>
+                                </div>
+                            </div>
+                            <div class="portfolio-item">
+                                <div>
+                                    <div class="stock-symbol">TCS</div>
+                                    <div>25 Shares</div>
+                                </div>
+                                <div>
+                                    <div>₹3400.12</div>
+                                    <div class="stock-change negative">-0.45%</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Portfolio Form (Hidden by default) -->
+                        <div id="portfolioForm" style="display: none; margin-top: 20px;">
+                            <div class="portfolio-form">
+                                <div class="filter-group">
+                                    <label class="filter-label">Stock Symbol</label>
+                                    <select class="filter-select" id="portfolioStock">
+                                        <option>RELIANCE</option>
+                                        <option>HDFCBANK</option>
+                                        <option>TCS</option>
+                                        <option>INFY</option>
+                                        <option>SBIN</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <label class="filter-label">Quantity</label>
+                                    <input type="number" class="filter-input" id="portfolioQty" placeholder="Number of shares">
+                                </div>
+                                <div class="filter-group">
+                                    <label class="filter-label">Buy Price (₹)</label>
+                                    <input type="number" class="filter-input" id="portfolioPrice" placeholder="Purchase price">
+                                </div>
+                                <div class="filter-group">
+                                    <label class="filter-label">Date</label>
+                                    <input type="date" class="filter-input" id="portfolioDate">
+                                </div>
+                            </div>
+                            <button class="auth-btn" style="margin-top: 15px; width: 100%;" id="savePortfolioBtn">Add to Portfolio</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Real-Time Stock Screener -->
+                    <div class="card fade-in">
+                        <div class="card-header">
+                            <h3 class="card-title">Real-Time Stock Screener</h3>
+                            <div class="card-actions">
+                                <button class="card-btn"><i class="fas fa-sync"></i></button>
+                                <button class="card-btn"><i class="fas fa-cog"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="screener-filters">
+                            <div class="filter-group">
+                                <label class="filter-label">Exchange</label>
+                                <div class="exchange-tabs">
+                                    <div class="exchange-tab active" data-exchange="NSE">NSE</div>
+                                    <div class="exchange-tab" data-exchange="BSE">BSE</div>
+                                    <div class="exchange-tab" data-exchange="ALL">All</div>
+                                </div>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">Technical Indicator</label>
+                                <select class="filter-select">
+                                    <option>RSI (Overbought/Oversold)</option>
+                                    <option>MACD Crossover</option>
+                                    <option>Moving Average Crossover</option>
+                                    <option>Bollinger Breakout</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">Sector</label>
+                                <select class="filter-select" id="sectorFilter">
+                                    <option>All Sectors</option>
+                                    <option>Banking</option>
+                                    <option>IT Services</option>
+                                    <option>Energy</option>
+                                    <option>Automobile</option>
+                                    <option>Pharmaceuticals</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">Volume</label>
+                                <select class="filter-select">
+                                    <option>Any Volume</option>
+                                    <option>Over 1M</option>
+                                    <option>Over 5M</option>
+                                    <option>Over 10M</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="table-scroller">
+                            <table class="screener-table">
+                                <thead>
+                                    <tr>
+                                        <th data-sort="symbol">Symbol <i class="fas fa-sort sort-icon"></i></th>
+                                        <th data-sort="exchange">Exchange</th>
+                                        <th data-sort="price">Price <i class="fas fa-sort sort-icon"></i></th>
+                                        <th data-sort="change">Change <i class="fas fa-sort sort-icon"></i></th>
+                                        <th data-sort="rsi">RSI (14) <i class="fas fa-sort sort-icon"></i></th>
+                                        <th data-sort="volume">Volume <i class="fas fa-sort sort-icon"></i></th>
+                                        <th>Signal</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="stockTable">
+                                    <!-- Stock data will be inserted here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- TradingView Chart with Technical Tools -->
+                    <div class="card fade-in">
+                        <div class="card-header">
+                            <h3 class="card-title">Advanced Chart Analysis</h3>
+                            <div class="card-actions">
+                                <div class="chart-type">
+                                    <button class="chart-type-btn active" data-type="line">Line</button>
+                                    <button class="chart-type-btn" data-type="candlestick">Candle</button>
+                                </div>
+                                <button class="card-btn"><i class="fas fa-expand"></i></button>
+                            </div>
+                        </div>
+                        <div class="chart-container" style="height: 300px;">
+                            <div id="tv-chart" class="tv-chart-container"></div>
+                        </div>
+                        
+                        <div class="ta-tools">
+                            <div class="ta-tool tooltip">
+                                <i class="fas fa-wave-square"></i>
+                                <span>RSI</span>
+                                <span class="tooltip-text">Relative Strength Index - Momentum indicator</span>
+                            </div>
+                            <div class="ta-tool tooltip">
+                                <i class="fas fa-exchange-alt"></i>
+                                <span>MACD</span>
+                                <span class="tooltip-text">Moving Average Convergence Divergence</span>
+                            </div>
+                            <div class="ta-tool tooltip">
+                                <i class="fas fa-chart-line"></i>
+                                <span>Moving Averages</span>
+                                <span class="tooltip-text">Trend-following indicators</span>
+                            </div>
+                            <div class="ta-tool tooltip">
+                                <i class="fas fa-compress-alt"></i>
+                                <span>Bollinger Bands</span>
+                                <span class="tooltip-text">Volatility indicator</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Top Gainers & Losers -->
+                    <div class="card fade-in">
+                        <div class="card-header">
+                            <h3 class="card-title">Top Movers</h3>
+                            <div class="card-actions">
+                                <button class="card-btn"><i class="fas fa-sync"></i></button>
+                            </div>
+                        </div>
+                        <div class="top-movers-grid">
+                            <div class="mover-card">
+                                <div class="mover-header">
+                                    <div class="mover-title">Top Gainers</div>
+                                    <i class="fas fa-arrow-up" style="color: #10b981;"></i>
+                                </div>
+                                <div id="gainersList">
+                                    <!-- Gainers will be inserted here -->
+                                </div>
+                            </div>
+                            <div class="mover-card">
+                                <div class="mover-header">
+                                    <div class="mover-title">Top Losers</div>
+                                    <i class="fas fa-arrow-down" style="color: #ef4444;"></i>
+                                </div>
+                                <div id="losersList">
+                                    <!-- Losers will be inserted here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Market Overview -->
+                    <div class="card fade-in">
+                        <div class="card-header">
+                            <h3 class="card-title">Market Overview</h3>
+                            <div class="card-actions">
+                                <button class="card-btn"><i class="fas fa-sync"></i></button>
+                            </div>
+                        </div>
+                        <div class="market-overview">
+                            <div class="market-item">
+                                <div class="market-label">NIFTY 50</div>
+                                <div class="market-value positive">19,580.23 <span>+0.75%</span></div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 75%"></div>
+                                </div>
+                            </div>
+                            <div class="market-item">
+                                <div class="market-label">SENSEX</div>
+                                <div class="market-value positive">65,865.86 <span>+1.22%</span></div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 85%"></div>
+                                </div>
+                            </div>
+                            <div class="market-item">
+                                <div class="market-label">NIFTY BANK</div>
+                                <div class="market-value negative">42,420.15 <span>-0.15%</span></div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 45%"></div>
+                                </div>
+                            </div>
+                            <div class="market-item">
+                                <div class="market-label">INDIA VIX</div>
+                                <div class="market-value">12.24 <span>-2.15%</span></div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 30%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sector Heat Map -->
+                    <div class="card fade-in">
+                        <div class="card-header">
+                            <h3 class="card-title">Sector Heat Map</h3>
+                            <div class="card-actions">
+                                <button class="card-btn"><i class="fas fa-sync"></i></button>
+                            </div>
+                        </div>
+                        <div class="heatmap-grid" id="sectorHeatMap">
+                            <!-- Heat map items will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Educational Resources -->
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <h3 class="card-title">Educational Resources</h3>
+                        <div class="card-actions">
+                            <button class="card-btn"><i class="fas fa-book-open"></i></button>
+                        </div>
+                    </div>
+                    <div class="education-grid">
+                        <div class="edu-item">
+                            <i class="fas fa-book edu-icon"></i>
+                            <h4>Technical Analysis Basics</h4>
+                            <p>Learn the fundamentals of reading stock charts and indicators.</p>
+                            <div style="margin-top: 10px; color: #60a5fa; font-size: 14px;">
+                                <i class="fas fa-clock"></i> 15 min read
+                            </div>
+                        </div>
+                        <div class="edu-item">
+                            <i class="fas fa-wave-square edu-icon"></i>
+                            <h4>RSI Strategies</h4>
+                            <p>Master the Relative Strength Index for identifying overbought/oversold conditions.</p>
+                            <div style="margin-top: 10px; color: #60a5fa; font-size: 14px;">
+                                <i class="fas fa-video"></i> 8 min video
+                            </div>
+                        </div>
+                        <div class="edu-item">
+                            <i class="fas fa-exchange-alt edu-icon"></i>
+                            <h4>MACD Trading Techniques</h4>
+                            <p>Discover how to use MACD crossovers for entry and exit signals.</p>
+                            <div style="margin-top: 10px; color: #60a5fa; font-size: 14px;">
+                                <i class="fas fa-chart-line"></i> Interactive tutorial
+                            </div>
+                        </div>
+                        <div class="edu-item">
+                            <i class="fas fa-graduation-cap edu-icon"></i>
+                            <h4>Portfolio Management</h4>
+                            <p>Learn how to diversify your investments and manage risk effectively.</p>
+                            <div style="margin-top: 10px; color: #60a5fa; font-size: 14px;">
+                                <i class="fas fa-file-alt"></i> Comprehensive guide
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Realistic Indian Market Data
+        const indianStocks = [
+            { symbol: 'RELIANCE', name: 'Reliance Industries', sector: 'Energy', exchange: 'NSE', price: 2520.32, change: 0.85, rsi: 62.3, volume: '45.2M', signal: 'Neutral' },
+            { symbol: 'TCS', name: 'Tata Consultancy', sector: 'IT Services', exchange: 'NSE', price: 3400.12, change: -0.45, rsi: 28.7, volume: '32.8M', signal: 'Oversold' },
+            { symbol: 'HDFCBANK', name: 'HDFC Bank', sector: 'Banking', exchange: 'NSE', price: 1635.67, change: 1.23, rsi: 71.5, volume: '18.9M', signal: 'Overbought' },
+            { symbol: 'INFY', name: 'Infosys', sector: 'IT Services', exchange: 'NSE', price: 1458.83, change: 0.32, rsi: 58.9, volume: '38.7M', signal: 'Neutral' },
+            { symbol: 'HINDUNILVR', name: 'Hindustan Unilever', sector: 'FMCG', exchange: 'NSE', price: 2618.45, change: -2.15, rsi: 41.2, volume: '12.1M', signal: 'Neutral' },
+            { symbol: 'ICICIBANK', name: 'ICICI Bank', sector: 'Banking', exchange: 'NSE', price: 925.78, change: 1.78, rsi: 67.4, volume: '27.5M', signal: 'Overbought' },
+            { symbol: 'SBIN', name: 'State Bank of India', sector: 'Banking', exchange: 'BSE', price: 565.20, change: 3.45, rsi: 75.1, volume: '52.3M', signal: 'Overbought' },
+            { symbol: 'LT', name: 'Larsen & Toubro', sector: 'Infrastructure', exchange: 'BSE', price: 2566.34, change: -0.89, rsi: 44.5, volume: '15.8M', signal: 'Neutral' },
+            { symbol: 'KOTAKBANK', name: 'Kotak Mahindra Bank', sector: 'Banking', exchange: 'NSE', price: 1785.45, change: 1.25, rsi: 59.2, volume: '22.4M', signal: 'Neutral' },
+            { symbol: 'AXISBANK', name: 'Axis Bank', sector: 'Banking', exchange: 'BSE', price: 965.78, change: -1.25, rsi: 42.8, volume: '30.1M', signal: 'Oversold' },
+            { symbol: 'ITC', name: 'ITC Limited', sector: 'FMCG', exchange: 'NSE', price: 450.25, change: 0.75, rsi: 65.3, volume: '40.2M', signal: 'Neutral' },
+            { symbol: 'BAJFINANCE', name: 'Bajaj Finance', sector: 'Financial Services', exchange: 'BSE', price: 7250.30, change: 2.15, rsi: 72.8, volume: '8.7M', signal: 'Overbought' },
+            { symbol: 'ASIANPAINT', name: 'Asian Paints', sector: 'Chemicals', exchange: 'NSE', price: 3325.75, change: 1.45, rsi: 68.2, volume: '12.3M', signal: 'Overbought' },
+            { symbol: 'MARUTI', name: 'Maruti Suzuki', sector: 'Automobile', exchange: 'NSE', price: 9850.60, change: -0.85, rsi: 48.7, volume: '7.8M', signal: 'Neutral' },
+            { symbol: 'SUNPHARMA', name: 'Sun Pharma', sector: 'Pharmaceuticals', exchange: 'NSE', price: 1025.40, change: 0.95, rsi: 56.3, volume: '15.6M', signal: 'Neutral' }
+        ];
+
+        // DOM Elements
+        const stockTable = document.getElementById('stockTable');
+        const gainersList = document.getElementById('gainersList');
+        const losersList = document.getElementById('losersList');
+        const sectorHeatMap = document.getElementById('sectorHeatMap');
+        const exchangeTabs = document.querySelectorAll('.exchange-tab');
+        const sectorFilter = document.getElementById('sectorFilter');
+        const portfolioForm = document.getElementById('portfolioForm');
+        const addStockBtn = document.getElementById('addStockBtn');
+        const savePortfolioBtn = document.getElementById('savePortfolioBtn');
+        let currentStocks = [...indianStocks];
+        let sortColumn = null;
+        let sortDirection = 1;
+        let tvWidget = null;
+        let currentExchange = 'NSE';
+
+        // Initialize dashboard
+        function initializeDashboard() {
+            renderStockTable();
+            createTradingViewChart('NSE:RELIANCE');
+            generateTopMovers();
+            generateSectorHeatMap();
+            
+            // Exchange tabs
+            exchangeTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.exchange-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    currentExchange = tab.dataset.exchange;
+                    renderStockTable();
+                });
+            });
+            
+            // Sector filter
+            sectorFilter.addEventListener('change', renderStockTable);
+            
+            // Portfolio management
+            addStockBtn.addEventListener('click', () => {
+                portfolioForm.style.display = portfolioForm.style.display === 'none' ? 'block' : 'none';
+            });
+            
+            savePortfolioBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const symbol = document.getElementById('portfolioStock').value;
+                const qty = document.getElementById('portfolioQty').value;
+                const price = document.getElementById('portfolioPrice').value;
+                
+                if (symbol && qty && price) {
+                    // Add to portfolio
+                    portfolioForm.style.display = 'none';
+                    alert(`${qty} shares of ${symbol} added to portfolio at ₹${price}`);
+                }
+            });
+            
+            // Add event listeners to table headers for sorting
+            document.querySelectorAll('.screener-table th[data-sort]').forEach(th => {
+                th.addEventListener('click', () => {
+                    const column = th.dataset.sort;
+                    if (sortColumn === column) {
+                        sortDirection *= -1;
+                    } else {
+                        sortColumn = column;
+                        sortDirection = 1;
+                    }
+                    sortTable(column, sortDirection);
+                    
+                    // Update sort icons
+                    document.querySelectorAll('.sort-icon').forEach(icon => {
+                        icon.className = 'sort-icon fas fa-sort';
+                    });
+                    const icon = th.querySelector('.sort-icon');
+                    icon.className = `sort-icon fas fa-sort-${sortDirection === 1 ? 'up' : 'down'}`;
+                });
+            });
+            
+            // Simulate real-time updates
+            setInterval(updateStockData, 5000);
+            setInterval(generateTopMovers, 10000);
+            setInterval(generateSectorHeatMap, 15000);
+        }
+
+        // Generate stock data with realistic fluctuations
+        function updateStockData() {
+            currentStocks.forEach(stock => {
+                // Simulate realistic price changes
+                const volatility = stock.sector === 'Banking' ? 0.8 : 
+                                  stock.sector === 'IT Services' ? 0.7 : 0.5;
+                
+                const change = (Math.random() - 0.5) * volatility;
+                stock.price = parseFloat((stock.price * (1 + change/100)).toFixed(2));
+                stock.change = parseFloat((stock.change + change).toFixed(2));
+                
+                // Update RSI based on momentum
+                const rsiChange = change > 0 ? 
+                    Math.min(1, change * 0.5) : 
+                    Math.max(-1, change * 0.5);
+                
+                stock.rsi = parseFloat((stock.rsi + rsiChange).toFixed(1));
+                if (stock.rsi < 0) stock.rsi = 0;
+                if (stock.rsi > 100) stock.rsi = 100;
+                
+                // Update signal
+                if (stock.rsi < 30) stock.signal = 'Oversold';
+                else if (stock.rsi > 70) stock.signal = 'Overbought';
+                else stock.signal = 'Neutral';
+                
+                // Update volume
+                const volumeChange = Math.random() * 20 - 10;
+                const currentVolume = parseFloat(stock.volume);
+                if (!isNaN(currentVolume)) {
+                    const newVolume = Math.max(0.1, currentVolume * (1 + volumeChange/100));
+                    stock.volume = newVolume.toFixed(1) + 'M';
+                }
+            });
+            
+            renderStockTable();
+        }
+
+        // Render stock table
+        function renderStockTable() {
+            let tableHTML = '';
+            
+            // Filter by exchange
+            let filteredStocks = currentExchange === 'ALL' 
+                ? currentStocks 
+                : currentStocks.filter(stock => stock.exchange === currentExchange);
+            
+            // Filter by sector
+            const selectedSector = sectorFilter.value;
+            if (selectedSector !== 'All Sectors') {
+                filteredStocks = filteredStocks.filter(stock => stock.sector === selectedSector);
+            }
+            
+            filteredStocks.forEach(stock => {
+                const changeClass = stock.change >= 0 ? 'positive' : 'negative';
+                const changeSign = stock.change >= 0 ? '+' : '';
+                
+                tableHTML += `
+                    <tr class="stock-row" data-symbol="${stock.symbol}" data-exchange="${stock.exchange}">
+                        <td>
+                            <div class="stock-symbol">${stock.symbol}</div>
+                            <div class="stock-name">${stock.name}</div>
+                        </td>
+                        <td>${stock.exchange}</td>
+                        <td>₹${stock.price.toLocaleString('en-IN')}</td>
+                        <td class="stock-change ${changeClass}">${changeSign}${stock.change.toFixed(2)}%</td>
+                        <td>${stock.rsi}</td>
+                        <td>${stock.volume}</td>
+                        <td><span class="signal-tag ${stock.signal.toLowerCase()}">${stock.signal}</span></td>
+                    </tr>
+                `;
+            });
+            
+            stockTable.innerHTML = tableHTML;
+            
+            // Add click event to table rows
+            document.querySelectorAll('.stock-row').forEach(row => {
+                row.addEventListener('click', function() {
+                    const symbol = this.dataset.symbol;
+                    const exchange = this.dataset.exchange;
+                    createTradingViewChart(`${exchange}:${symbol}`);
+                });
+            });
+        }
+
+        // Sort table
+        function sortTable(column, direction) {
+            currentStocks.sort((a, b) => {
+                if (a[column] < b[column]) return -1 * direction;
+                if (a[column] > b[column]) return 1 * direction;
+                return 0;
+            });
+            renderStockTable();
+        }
+
+        // TradingView chart
+        function createTradingViewChart(symbol) {
+            if (tvWidget) {
+                tvWidget.remove();
+            }
+            
+            tvWidget = new TradingView.widget({
+                symbol: symbol,
+                interval: 'D',
+                container_id: 'tv-chart',
+                autosize: true,
+                theme: 'dark',
+                style: '1',
+                toolbar_bg: '#0f172a',
+                enable_publishing: false,
+                hide_top_toolbar: true,
+                hide_legend: true,
+                save_image: false,
+                studies: ['RSI@tv-basicstudies', 'MASimple@tv-basicstudies'],
+                locale: 'en',
+                timezone: 'Asia/Kolkata'
+            });
+            
+            // Update chart title
+            document.querySelector('.card-title').textContent = `Advanced Chart - ${symbol}`;
+        }
+
+        // Top gainers and losers
+        function generateTopMovers() {
+            // Generate mock gainers
+            const gainers = [
+                { symbol: 'ADANIENT', name: 'Adani Ent.', price: 2850.45, change: 5.25 },
+                { symbol: 'TATAMOTORS', name: 'Tata Motors', price: 645.30, change: 4.75 },
+                { symbol: 'BAJAJFINSV', name: 'Bajaj Finserv', price: 1620.80, change: 3.95 },
+                { symbol: 'ASIANPAINT', name: 'Asian Paints', price: 3325.75, change: 3.45 },
+                { symbol: 'ULTRACEMCO', name: 'UltraTech', price: 8250.60, change: 2.85 }
+            ];
+            
+            // Generate mock losers
+            const losers = [
+                { symbol: 'ONGC', name: 'ONGC', price: 165.30, change: -3.25 },
+                { symbol: 'NTPC', name: 'NTPC', price: 182.45, change: -2.95 },
+                { symbol: 'COALINDIA', name: 'Coal India', price: 235.60, change: -2.45 },
+                { symbol: 'HCLTECH', name: 'HCL Tech', price: 1125.75, change: -1.85 },
+                { symbol: 'WIPRO', name: 'Wipro', price: 415.20, change: -1.35 }
+            ];
+            
+            // Render gainers
+            let gainersHTML = '';
+            gainers.forEach(stock => {
+                gainersHTML += `
+                    <div class="mover-stock">
+                        <div>
+                            <div class="stock-symbol">${stock.symbol}</div>
+                            <div class="stock-name">${stock.name}</div>
+                        </div>
+                        <div class="stock-change positive">+${stock.change.toFixed(2)}%</div>
+                    </div>
+                `;
+            });
+            gainersList.innerHTML = gainersHTML;
+            
+            // Render losers
+            let losersHTML = '';
+            losers.forEach(stock => {
+                losersHTML += `
+                    <div class="mover-stock">
+                        <div>
+                            <div class="stock-symbol">${stock.symbol}</div>
+                            <div class="stock-name">${stock.name}</div>
+                        </div>
+                        <div class="stock-change negative">${stock.change.toFixed(2)}%</div>
+                    </div>
+                `;
+            });
+            losersList.innerHTML = losersHTML;
+        }
+
+        // Sector heat map
+        function generateSectorHeatMap() {
+            const sectors = [
+                { name: 'Banking', change: 1.25, status: 'positive' },
+                { name: 'IT Services', change: 0.85, status: 'positive' },
+                { name: 'Automobile', change: -0.35, status: 'negative' },
+                { name: 'Pharmaceuticals', change: 0.45, status: 'positive' },
+                { name: 'FMCG', change: -0.75, status: 'negative' },
+                { name: 'Energy', change: 1.65, status: 'positive' },
+                { name: 'Real Estate', change: 2.15, status: 'positive' },
+                { name: 'Infrastructure', change: -1.25, status: 'negative' },
+                { name: 'Chemicals', change: 0.25, status: 'neutral' }
+            ];
+            
+            // Render heat map
+            let heatMapHTML = '';
+            sectors.forEach(sector => {
+                const changeSign = sector.change >= 0 ? '+' : '';
+                const intensity = Math.min(100, Math.abs(sector.change) * 20);
+                
+                heatMapHTML += `
+                    <div class="heatmap-item ${sector.status}" 
+                         style="--intensity: ${intensity}%"
+                         data-tooltip="${sector.name}: ${changeSign}${sector.change.toFixed(2)}%">
+                        <div class="sector-name">${sector.name}</div>
+                        <div class="sector-change">${changeSign}${sector.change.toFixed(2)}%</div>
+                    </div>
+                `;
+            });
+            sectorHeatMap.innerHTML = heatMapHTML;
+        }
+
+        // Initialize when page loads
+        window.addEventListener('DOMContentLoaded', initializeDashboard);
+    </script>
+</body>
+</html>

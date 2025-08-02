@@ -1,0 +1,18 @@
+/* Add to media queries */
+@media (max-width: 576px) {
+    .screener-filters {
+        grid-template-columns: 1fr;
+    }
+    
+    .mover-card {
+        padding: 10px;
+    }
+    
+    .chart-container {
+        height: 250px;
+    }
+    
+    .header-logo span {
+        display: none;
+    }
+}
