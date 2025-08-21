@@ -1,8 +1,8 @@
 <?php
-$host = "sqlXXX.epizy.com"; // InfinityFree से असली host भरें (जैसे sql301.epizy.com)
-$user = "epiz_XXXXXXX";    // InfinityFree MySQL Username
-$pass = "YOUR_DB_PASSWORD"; // InfinityFree MySQL Password (आप खुद भरें)
-$dbname = "epiz_XXXXXXX_db"; // InfinityFree MySQL Database Name
+$host = "sql113.infinityfree.com";
+$user = "if0_39689600";   
+$pass = "PARM4wKnMH0pScw"; 
+$dbname = "if0_39689600_sralgotrading"; 
 
 $conn = new mysqli($host, $user, $pass, $dbname);
 if ($conn->connect_error) {
