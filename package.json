@@ -11,13 +11,14 @@
   "dependencies": {
     "axios": "^1.7.2",
     "bcryptjs": "^2.4.3",
-    "better-sqlite3": "^8.4.0",
     "jsonwebtoken": "^9.0.2",
     "next": "14.2.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "swr": "^2.2.5",
-    "smartapi-javascript": "^1.0.27"
+    "smartapi-javascript": "^1.0.27",
+    "sqlite3": "^5.1.7",
+    "sqlite": "^4.2.3"
   },
   "devDependencies": {
     "typescript": "^5.4.5",
@@ -27,5 +28,8 @@
     "tailwindcss": "^3.4.4",
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.38"
+  },
+  "engines": {
+    "node": "20.x"
   }
 }
