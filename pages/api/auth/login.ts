@@ -1,20 +1,41 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import bcrypt from 'bcryptjs'
-import db from '../../../lib/db'
-import { sign } from '../../../lib/jwt'
+import { getUserByUsername } from '../../../lib/database';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse){
-  if (req.method !== 'POST') return res.status(405).end()
-  const { email, password } = req.body || {}
-  if (!email || !password) return res.status(400).json({ error: 'Missing fields' })
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Method not allowed' });
+  }
 
-  const row = db.prepare('SELECT id, name, email, password FROM users WHERE email = ?').get(email) as any
-  if (!row) return res.status(401).json({ error: 'Invalid credentials' })
+  try {
+    const { username, password } = req.body;
 
-  const ok = bcrypt.compareSync(password, row.password)
-  if (!ok) return res.status(401).json({ error: 'Invalid credentials' })
+    // Find user
+    const user = await getUserByUsername(username);
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
 
-  const token = sign({ sub: row.id, email: row.email })
-  const user = { id: row.id, name: row.name, email: row.email }
-  return res.json({ user, token })
+    // Check password
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+
+    // Create JWT token
+    const token = jwt.sign(
+      { userId: user.id, username: user.username },
+      process.env.JWT_SECRET || 'your-secret-key',
+      { expiresIn: '7d' }
+    );
+
+    res.status(200).json({ 
+      message: 'Login successful', 
+      token,
+      user: { id: user.id, username: user.username }
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 }
