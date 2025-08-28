@@ -1,0 +1,3 @@
+import {useEffect, useState} from 'react'; export default function Dashboard(){ const [data,setData]=useState(null);
+useEffect(()=>{ fetch('/api/market').then(r=>r.json()).then(j=>setData(j)).catch(e=>setData({ok:false,error:String(e)})); },[]);
+return (<div><div className='header'><h2>SR ALGO SCREENER - Dashboard</h2></div><div className='container'>{!data? <div className='card'>Loading...</div> : data.ok? <div className='card'><h3>Market ({data.demo?'Demo':'Live'})</h3><ul>{data.data.symbols.map(s=>(<li key={s.symbol}>{s.symbol} - ₹{s.price} ({s.change}%)</li>))}</ul></div> : <div className='card'>Error: {data.error}</div>}</div></div>)}

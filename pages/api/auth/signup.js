@@ -1,0 +1,2 @@
+const bcrypt = require('bcryptjs'); const prisma = require('../../../lib/prisma');
+export default async function handler(req,res){ try{ if(req.method!=='POST') return res.status(405).end(); const {email,password}=req.body; if(!email||!password) return res.status(400).json({ok:false}); const h = await bcrypt.hash(password,10); await prisma.user.create({data:{email, password: h}}); return res.json({ok:true}); } catch(e){ console.error(e); res.status(500).json({ok:false,error:e.message}); } }

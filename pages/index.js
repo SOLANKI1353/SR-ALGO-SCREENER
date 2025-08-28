@@ -1,0 +1,1 @@
+import Link from 'next/link'; export default function Home(){ return <div><div className='header'><h2>SR ALGO SCREENER</h2></div><div className='container'><div className='card'><h3>Modern Demo</h3><p>Go to <Link href='/dashboard'>Dashboard</Link> or <Link href='/settings'>Settings</Link>.</p></div></div></div> }

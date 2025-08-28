@@ -1,0 +1,23 @@
+{
+  "name": "sr-algo-screener-modern",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "npx prisma generate && next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "13.5.4",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "bcryptjs": "2.4.3",
+    "jsonwebtoken": "9.0.2",
+    "@prisma/client": "5.8.0",
+    "recharts": "2.5.0",
+    "papaparse": "5.4.1"
+  },
+  "devDependencies": {
+    "prisma": "5.8.0"
+  }
+}
