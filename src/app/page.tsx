@@ -12,7 +12,7 @@ export default function LoginPage() {
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center items-center gap-2">
             <Flame className="h-8 w-8 text-primary" />
-            <CardTitle className="text-3xl font-bold">AlgoSight</CardTitle>
+            <CardTitle className="text-3xl font-bold">Sr Algo</CardTitle>
           </div>
           <CardDescription>Enter your email below to login to your account</CardDescription>
         </CardHeader>
