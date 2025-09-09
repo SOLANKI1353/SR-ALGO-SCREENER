@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Calendar as CalendarIcon } from "lucide-react"
-import { addDays, format } from "date-fns"
+import { addDays, format, subDays } from "date-fns"
 import { DateRange } from "react-day-picker"
 
 import { cn } from "@/lib/utils"
@@ -18,8 +18,8 @@ export function DatePickerWithRange({
   className,
 }: React.HTMLAttributes<HTMLDivElement>) {
   const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(2023, 10, 20),
-    to: addDays(new Date(2023, 10, 20), 20),
+    from: subDays(new Date(), 30),
+    to: new Date(),
   })
 
   return (

@@ -1,4 +1,6 @@
 
+import { format, subDays } from 'date-fns';
+
 export const topMovers = {
   gainers: [
     { ticker: "ADANIPORTS", price: 1450.55, change: "+5.8%", volume: "2.3M" },
@@ -165,15 +167,16 @@ export const backtestingStrategies = [
     { id: 'volume_spike', name: 'Volume Spike', description: 'Identifies unusual trading volume to signal potential moves.' },
 ];
 
+const today = new Date();
 export const backtestingResults = {
     pnl: 15230.45,
     winRate: 68.5,
     maxDrawdown: -12.3,
     sharpeRatio: 1.85,
     trades: [
-        { ticker: 'RELIANCE', type: 'BUY' as const, price: 2800, date: '2023-10-01' },
-        { ticker: 'RELIANCE', type: 'SELL' as const, price: 2950, date: '2023-10-15' },
-        { ticker: 'TCS', type: 'BUY' as const, price: 3800, date: '2023-11-05' },
-        { ticker: 'TCS', type: 'SELL' as const, price: 3950, date: '2023-11-20' },
+        { ticker: 'RELIANCE', type: 'BUY' as const, price: 2800, date: format(subDays(today, 25), 'yyyy-MM-dd') },
+        { ticker: 'RELIANCE', type: 'SELL' as const, price: 2950, date: format(subDays(today, 15), 'yyyy-MM-dd') },
+        { ticker: 'TCS', type: 'BUY' as const, price: 3800, date: format(subDays(today, 10), 'yyyy-MM-dd') },
+        { ticker: 'TCS', type: 'SELL' as const, price: 3950, date: format(subDays(today, 2), 'yyyy-MM-dd') },
     ]
 }
