@@ -180,3 +180,15 @@ export const backtestingResults = {
         { ticker: 'TCS', type: 'SELL' as const, price: 3950, date: format(subDays(today, 2), 'yyyy-MM-dd') },
     ]
 }
+
+export const openingRangeBreakoutData = {
+    bullish: [
+        { ticker: "INDUSINDBK", breakoutPrice: 1505.50, volume: "1.8M", time: "09:25 AM", breakoutType: 'bullish' as const },
+        { ticker: "ULTRACEMCO", breakoutPrice: 10850.00, volume: "0.5M", time: "09:31 AM", breakoutType: 'bullish' as const },
+        { ticker: "LT", breakoutPrice: 3620.10, volume: "2.1M", time: "09:40 AM", breakoutType: 'bullish' as const },
+    ],
+    bearish: [
+        { ticker: "UPL", breakoutPrice: 550.75, volume: "3.2M", time: "09:28 AM", breakoutType: 'bearish' as const },
+        { ticker: "ASIANPAINT", breakoutPrice: 2865.00, volume: "1.2M", time: "09:35 AM", breakoutType: 'bearish' as const },
+    ]
+}

@@ -1,3 +1,4 @@
+
 "use client"
 
 import Link from "next/link"
@@ -12,7 +13,8 @@ import {
   Settings,
   Flame,
   LayoutDashboard,
-  Repeat
+  Repeat,
+  ScanSearch
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -21,6 +23,7 @@ export function AppSidebar() {
 
   const navItems = [
     { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+    { href: "/dashboard/screeners", icon: ScanSearch, label: "Screeners" },
     { href: "/dashboard/backtesting", icon: Repeat, label: "Backtesting" },
     { href: "/dashboard/settings", icon: Settings, label: "Settings", isBottom: true },
   ]

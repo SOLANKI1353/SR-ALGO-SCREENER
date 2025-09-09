@@ -1,3 +1,4 @@
+
 "use client"
 
 import Link from "next/link"
@@ -12,7 +13,8 @@ import {
   Sun,
   Flame,
   Repeat,
-  LayoutDashboard
+  LayoutDashboard,
+  ScanSearch
 } from "lucide-react"
 import { useTheme } from "next-themes"
 
@@ -62,6 +64,13 @@ export function AppHeader() {
             >
               <LayoutDashboard className="h-5 w-5" />
               Dashboard
+            </Link>
+            <Link
+              href="/dashboard/screeners"
+              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+            >
+              <ScanSearch className="h-5 w-5" />
+              Screeners
             </Link>
             <Link
               href="/dashboard/backtesting"
