@@ -4,8 +4,6 @@
 import Link from "next/link"
 import {
   Bell,
-  Home,
-  LineChart,
   PanelLeft,
   Search,
   Settings,
@@ -14,7 +12,9 @@ import {
   Flame,
   Repeat,
   LayoutDashboard,
-  ScanSearch
+  ScanSearch,
+  Layers,
+  LineChart
 } from "lucide-react"
 import { useTheme } from "next-themes"
 
@@ -66,11 +66,25 @@ export function AppHeader() {
               Dashboard
             </Link>
             <Link
+              href="/dashboard/chart"
+              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+            >
+              <LineChart className="h-5 w-5" />
+              Chart
+            </Link>
+            <Link
               href="/dashboard/screeners"
               className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
             >
               <ScanSearch className="h-5 w-5" />
               Screeners
+            </Link>
+             <Link
+              href="/dashboard/options"
+              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+            >
+              <Layers className="h-5 w-5" />
+              Options
             </Link>
             <Link
               href="/dashboard/backtesting"

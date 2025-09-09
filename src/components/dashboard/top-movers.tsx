@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -116,7 +117,11 @@ function MoverTable({ data, showVolume = false, show52W = false, highOrLow = 'hi
         <TableBody>
           {data.map((stock) => (
             <TableRow key={stock.ticker}>
-              <TableCell className="font-medium">{stock.ticker}</TableCell>
+              <TableCell className="font-medium">
+                 <Link href={`/dashboard/chart?symbol=NSE:${stock.ticker}`} className="hover:underline">
+                    {stock.ticker}
+                </Link>
+              </TableCell>
               <TableCell className="text-right">₹{stock.price.toFixed(2)}</TableCell>
               <TableCell className={`text-right font-medium ${stock.change.startsWith('+') ? 'text-emerald-500' : 'text-red-500'}`}>{stock.change}</TableCell>
               {showVolume && <TableCell className="text-right">{stock.volume}</TableCell>}

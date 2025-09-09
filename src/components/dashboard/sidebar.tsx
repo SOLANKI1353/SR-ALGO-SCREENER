@@ -15,7 +15,8 @@ import {
   LayoutDashboard,
   Repeat,
   ScanSearch,
-  Layers
+  Layers,
+  LineChart
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -24,6 +25,7 @@ export function AppSidebar() {
 
   const navItems = [
     { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+    { href: "/dashboard/chart", icon: LineChart, label: "Chart" },
     { href: "/dashboard/screeners", icon: ScanSearch, label: "Screeners" },
     { href: "/dashboard/options", icon: Layers, label: "Options" },
     { href: "/dashboard/backtesting", icon: Repeat, label: "Backtesting" },

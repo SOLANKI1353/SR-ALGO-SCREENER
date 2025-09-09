@@ -1,16 +1,26 @@
 "use client"
 
-import React, { useEffect, useRef, memo, useState } from 'react';
+import React, { useEffect, useRef, memo, useState, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
 
 function TradingViewWidgetComponent() {
+  const searchParams = useSearchParams();
   const container = useRef<HTMLDivElement>(null);
-  const [symbol, setSymbol] = useState("TVC:NIFTY50");
-  const [inputSymbol, setInputSymbol] = useState("NIFTY50");
+  const [symbol, setSymbol] = useState(searchParams.get('symbol') || "TVC:NIFTY50");
+  const [inputSymbol, setInputSymbol] = useState(symbol.split(':')[1] || "NIFTY50");
   const { theme } = useTheme();
+
+  useEffect(() => {
+    const urlSymbol = searchParams.get('symbol');
+    if (urlSymbol && urlSymbol !== symbol) {
+        setSymbol(urlSymbol);
+        setInputSymbol(urlSymbol.includes(':') ? urlSymbol.split(':')[1] : urlSymbol);
+    }
+  }, [searchParams, symbol]);
 
   useEffect(() => {
     if (container.current && symbol) {
@@ -42,9 +52,7 @@ function TradingViewWidgetComponent() {
 
   const handleSymbolChange = () => {
     let processedSymbol = inputSymbol.toUpperCase().trim();
-    // If user enters a symbol without a prefix, try to guess it.
     if (processedSymbol && !processedSymbol.includes(':')) {
-        // A simple heuristic: if it looks like a common index, use TVC. Otherwise, assume it's a stock on NSE.
         if (['NIFTY50', 'NIFTY', 'SENSEX', 'BANKNIFTY'].includes(processedSymbol)) {
             processedSymbol = `TVC:${processedSymbol}`;
         } else {
@@ -80,4 +88,11 @@ function TradingViewWidgetComponent() {
   );
 }
 
-export const TradingViewWidget = memo(TradingViewWidgetComponent);
+const TradingViewWidgetSuspenseWrapper = () => (
+    <Suspense fallback={<div>Loading Chart...</div>}>
+        <TradingViewWidgetComponent />
+    </Suspense>
+);
+
+
+export const TradingViewWidget = memo(TradingViewWidgetSuspenseWrapper);

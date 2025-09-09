@@ -2,7 +2,6 @@ import { TopMovers } from '@/components/dashboard/top-movers';
 import { Watchlist } from '@/components/dashboard/watchlist';
 import { Heatmap } from '@/components/dashboard/heatmap';
 import { AiSignals } from '@/components/dashboard/ai-signals';
-import { TradingViewWidget } from '@/components/dashboard/trading-view-widget';
 import { FiiDiiData } from '@/components/dashboard/fii-dii-data';
 import { MarketOverview } from '@/components/dashboard/market-overview';
 
@@ -14,15 +13,14 @@ export default function DashboardPage() {
            <div className="lg:col-span-4">
                 <MarketOverview />
             </div>
-            <div className="lg:col-span-4">
-                <TradingViewWidget />
-            </div>
         </div>
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <TopMovers />
             <Heatmap />
+            <div className="md:col-span-2 lg:col-span-1">
+                <Watchlist />
+            </div>
         </div>
-        <Watchlist />
       </div>
       <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-1">
         <AiSignals />
