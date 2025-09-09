@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { optionChainData } from "@/lib/data"
 import { Skeleton } from "@/components/ui/skeleton"
+import { cn } from "@/lib/utils"
 
 type Option = {
   strike: number;
@@ -87,61 +88,50 @@ export function OptionChain() {
                 <p className="text-sm">Try NIFTY, BANKNIFTY, or RELIANCE.</p>
             </div>
         ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8">
-          <div>
-            <h3 className="text-lg font-semibold text-center mb-2">CALLS</h3>
-            <div className="overflow-x-auto border rounded-md">
-              <Table>
+        <div className="overflow-x-auto">
+            <div className="flex justify-between font-bold text-lg mb-2 px-4">
+                <h3 className="w-full text-center text-emerald-500">CALLS</h3>
+                <div className="w-40 text-center"></div>
+                <h3 className="w-full text-center text-red-500">PUTS</h3>
+            </div>
+            <Table className="min-w-[1200px]">
                 <TableHeader>
                   <TableRow>
-                    <TableHead>OI</TableHead>
-                    <TableHead>Volume</TableHead>
-                    <TableHead>IV</TableHead>
-                    <TableHead>LTP</TableHead>
-                    <TableHead className="text-center bg-muted">Strike</TableHead>
+                    <TableHead className="text-right">OI</TableHead>
+                    <TableHead className="text-right">Volume</TableHead>
+                    <TableHead className="text-right">IV</TableHead>
+                    <TableHead className="text-right">LTP</TableHead>
+                    <TableHead className="text-center w-40 bg-muted">Strike</TableHead>
+                    <TableHead className="text-right">LTP</TableHead>
+                    <TableHead className="text-right">IV</TableHead>
+                    <TableHead className="text-right">Volume</TableHead>
+                    <TableHead className="text-right">OI</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data.calls.map((option) => (
-                    <TableRow key={option.strike} className={isITM(option.strike, 'call') ? 'bg-amber-100/50 dark:bg-amber-900/20' : ''}>
-                      <TableCell>{option.oi}</TableCell>
-                      <TableCell>{option.volume}</TableCell>
-                      <TableCell>{option.iv}</TableCell>
-                      <TableCell>{option.ltp}</TableCell>
-                      <TableCell className="text-center font-bold bg-muted">{option.strike}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-center mb-2">PUTS</h3>
-             <div className="overflow-x-auto border rounded-md">
-                <Table>
-                    <TableHeader>
-                    <TableRow>
-                        <TableHead className="text-center bg-muted">Strike</TableHead>
-                        <TableHead>LTP</TableHead>
-                        <TableHead>IV</TableHead>
-                        <TableHead>Volume</TableHead>
-                        <TableHead>OI</TableHead>
-                    </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                    {data.puts.map((option) => (
-                        <TableRow key={option.strike} className={isITM(option.strike, 'put') ? 'bg-amber-100/50 dark:bg-amber-900/20' : ''}>
-                        <TableCell className="text-center font-bold bg-muted">{option.strike}</TableCell>
-                        <TableCell>{option.ltp}</TableCell>
-                        <TableCell>{option.iv}</TableCell>
-                        <TableCell>{option.volume}</TableCell>
-                        <TableCell>{option.oi}</TableCell>
+                  {data.calls.map((call, index) => {
+                    const put = data.puts[index];
+                    return (
+                        <TableRow key={call.strike}>
+                            {/* Call Options */}
+                            <TableCell className={cn("text-right", isITM(call.strike, 'call') && 'bg-amber-100/50 dark:bg-amber-900/20')}>{call.oi}</TableCell>
+                            <TableCell className={cn("text-right", isITM(call.strike, 'call') && 'bg-amber-100/50 dark:bg-amber-900/20')}>{call.volume}</TableCell>
+                            <TableCell className={cn("text-right", isITM(call.strike, 'call') && 'bg-amber-100/50 dark:bg-amber-900/20')}>{call.iv}</TableCell>
+                            <TableCell className={cn("text-right font-medium", isITM(call.strike, 'call') && 'bg-amber-100/50 dark:bg-amber-900/20')}>{call.ltp}</TableCell>
+
+                            {/* Strike Price */}
+                            <TableCell className="text-center font-bold bg-muted w-40">{call.strike}</TableCell>
+
+                            {/* Put Options */}
+                            <TableCell className={cn("text-right font-medium", isITM(put.strike, 'put') && 'bg-amber-100/50 dark:bg-amber-900/20')}>{put.ltp}</TableCell>
+                            <TableCell className={cn("text-right", isITM(put.strike, 'put') && 'bg-amber-100/50 dark:bg-amber-900/20')}>{put.iv}</TableCell>
+                            <TableCell className={cn("text-right", isITM(put.strike, 'put') && 'bg-amber-100/50 dark:bg-amber-900/20')}>{put.volume}</TableCell>
+                            <TableCell className={cn("text-right", isITM(put.strike, 'put') && 'bg-amber-100/50 dark:bg-amber-900/20')}>{put.oi}</TableCell>
                         </TableRow>
-                    ))}
-                    </TableBody>
-                </Table>
-            </div>
-          </div>
+                    )
+                  })}
+                </TableBody>
+            </Table>
         </div>
         )}
       </CardContent>
@@ -151,24 +141,16 @@ export function OptionChain() {
 
 function OptionChainSkeleton() {
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8">
-            <div>
-                <Skeleton className="h-6 w-24 mx-auto mb-2" />
-                <div className="border rounded-md p-2 space-y-2">
-                    <Skeleton className="h-10 w-full" />
-                    {Array.from({length: 10}).map((_, i) => (
-                        <Skeleton key={i} className="h-8 w-full" />
-                    ))}
-                </div>
+        <div className="space-y-4">
+            <div className="flex justify-between">
+                <Skeleton className="h-6 w-24" />
+                <Skeleton className="h-6 w-24" />
             </div>
-            <div>
-                <Skeleton className="h-6 w-24 mx-auto mb-2" />
-                <div className="border rounded-md p-2 space-y-2">
-                    <Skeleton className="h-10 w-full" />
-                    {Array.from({length: 10}).map((_, i) => (
-                        <Skeleton key={i} className="h-8 w-full" />
-                    ))}
-                </div>
+            <div className="border rounded-md p-2 space-y-2">
+                <Skeleton className="h-10 w-full" />
+                {Array.from({length: 10}).map((_, i) => (
+                    <Skeleton key={i} className="h-8 w-full" />
+                ))}
             </div>
         </div>
     )
