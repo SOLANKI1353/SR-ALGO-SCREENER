@@ -243,16 +243,17 @@ export const advanceDeclineData = [
   { name: 'NIFTY REALTY', advances: 2, declines: 8 },
 ];
 
+
+const generateDailyFlows = (days: number) => {
+    return Array.from({length: days}).map((_, i) => ({
+        date: format(subDays(today, i + 1), 'dd MMM yyyy'),
+        fii: parseFloat(((Math.random() - 0.45) * 8000).toFixed(2)),
+        dii: parseFloat(((Math.random() - 0.55) * 6000).toFixed(2))
+    }));
+};
+
 export const fiiDiiData = {
-    date: format(subDays(today, 1), 'dd MMM yyyy'),
-    fii: {
-        buy: 8210.56,
-        sell: 7530.42,
-        net: 680.14
-    },
-    dii: {
-        buy: 9540.88,
-        sell: 9870.12,
-        net: -329.24
-    }
+    cash: generateDailyFlows(5).map(d => ({...d, dii: parseFloat(((Math.random() - 0.48) * 6000).toFixed(2))})),
+    indexFutures: generateDailyFlows(5),
+    stockFutures: generateDailyFlows(5)
 };
