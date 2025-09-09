@@ -11,7 +11,7 @@ export function TopMovers() {
     <Card>
       <CardHeader>
         <CardTitle>Top Movers</CardTitle>
-        <CardDescription>Today's biggest market gainers and losers.</CardDescription>
+        <CardDescription>Today's biggest market gainers and losers (demo data).</CardDescription>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="gainers">

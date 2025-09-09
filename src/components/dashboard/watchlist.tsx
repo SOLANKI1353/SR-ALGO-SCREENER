@@ -40,7 +40,7 @@ export function Watchlist() {
     <Card>
       <CardHeader>
         <CardTitle>My Watchlist</CardTitle>
-        <CardDescription>Your curated list of stocks to watch.</CardDescription>
+        <CardDescription>Your curated list of stocks to watch (demo data).</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex w-full max-w-sm items-center space-x-2 mb-4">

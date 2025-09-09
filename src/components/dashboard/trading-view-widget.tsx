@@ -60,7 +60,7 @@ function TradingViewWidgetComponent() {
             <div className="flex w-full max-w-sm items-center space-x-2">
                 <Input 
                     type="text" 
-                    placeholder="e.g. NIFTY50, RELIANCE" 
+                    placeholder="e.g., NIFTY50, RELIANCE" 
                     value={inputSymbol}
                     onChange={(e) => setInputSymbol(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSymbolChange()}
