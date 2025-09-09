@@ -1,15 +1,15 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
-// Your web app's Firebase configuration
+// Your web app's Firebase configuration.
+// This is safe to expose on the client-side.
 const firebaseConfig = {
-  "projectId": "algosight",
-  "appId": "1:258840598313:web:3a3642006a29c3b53b8938",
-  "storageBucket": "algosight.firebasestorage.app",
-  "apiKey": "AIzaSyA71E4GziA-CuL5OjD-HznsmuEC-kvQttk",
-  "authDomain": "algosight.firebaseapp.com",
-  "measurementId": "",
-  "messagingSenderId": "258840598313"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
 // Initialize Firebase
