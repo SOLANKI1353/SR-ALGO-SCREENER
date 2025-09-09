@@ -1,13 +1,23 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Info, TrendingUp, TrendingDown } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 export type BacktestingResultData = {
+    analysis: string;
     pnl: number;
     winRate: number;
     maxDrawdown: number;
     sharpeRatio: number;
-    trades: { ticker: string; type: 'BUY' | 'SELL'; price: number; date: string }[];
+    trades: { 
+        ticker: string; 
+        type: 'BUY' | 'SELL'; 
+        price: number; 
+        date: string;
+        rationale: string;
+    }[];
 };
 
 interface BacktestingResultsProps {
@@ -30,6 +40,7 @@ export function BacktestingResults({ results, isTesting }: BacktestingResultsPro
                     <Skeleton className="h-24 w-full" />
                     <Skeleton className="h-24 w-full" />
                 </div>
+                 <Skeleton className="h-20 w-full" />
                 <div>
                     <Skeleton className="h-6 w-32 mb-4" />
                     <Skeleton className="h-48 w-full" />
@@ -46,27 +57,36 @@ export function BacktestingResults({ results, isTesting }: BacktestingResultsPro
   return (
     <Card>
         <CardHeader>
-            <CardTitle>Backtest Results</CardTitle>
-            <CardDescription>Performance summary of the selected strategy.</CardDescription>
+            <CardTitle>AI Backtest Results</CardTitle>
+            <CardDescription>AI-generated performance summary of the selected strategy.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <StatCard title="Total PnL" value={`₹${results.pnl.toLocaleString('en-IN')}`} isPositive={results.pnl > 0} />
                 <StatCard title="Win Rate" value={`${results.winRate}%`} />
                 <StatCard title="Max Drawdown" value={`${results.maxDrawdown}%`} isPositive={false} />
-                <StatCard title="Sharpe Ratio" value={results.sharpeRatio.toString()} />
+                <StatCard title="Sharpe Ratio" value={results.sharpeRatio.toFixed(2)} />
             </div>
 
+            <Alert>
+                <Info className="h-4 w-4" />
+                <AlertTitle>AI Strategy Analysis</AlertTitle>
+                <AlertDescription>
+                   {results.analysis}
+                </AlertDescription>
+            </Alert>
+
             <div>
-                <h3 className="text-lg font-semibold mb-2">Trade Log</h3>
+                <h3 className="text-lg font-semibold mb-2">AI-Generated Trade Log</h3>
                 <div className="rounded-md border">
                     <Table>
                         <TableHeader>
                             <TableRow>
                                 <TableHead>Date</TableHead>
                                 <TableHead>Ticker</TableHead>
-                                <TableHead>Type</TableHead>
-                                <TableHead className="text-right">Price</TableHead>
+                                <TableHead>Signal</TableHead>
+                                <TableHead>Price</TableHead>
+                                <TableHead>AI Rationale</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -75,11 +95,13 @@ export function BacktestingResults({ results, isTesting }: BacktestingResultsPro
                                     <TableCell>{trade.date}</TableCell>
                                     <TableCell className="font-medium">{trade.ticker}</TableCell>
                                     <TableCell>
-                                        <span className={`font-medium ${trade.type === 'BUY' ? 'text-emerald-500' : 'text-red-500'}`}>
+                                        <Badge variant={trade.type === 'BUY' ? 'default' : 'destructive'}>
+                                            {trade.type === 'BUY' ? <TrendingUp className="mr-1 h-3 w-3" /> : <TrendingDown className="mr-1 h-3 w-3" />}
                                             {trade.type}
-                                        </span>
+                                        </Badge>
                                     </TableCell>
-                                    <TableCell className="text-right">₹{trade.price.toLocaleString('en-IN')}</TableCell>
+                                    <TableCell>₹{trade.price.toLocaleString('en-IN')}</TableCell>
+                                    <TableCell className="text-muted-foreground text-xs">{trade.rationale}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
