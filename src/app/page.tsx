@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -33,10 +34,12 @@ export default function LoginPage() {
       router.push('/dashboard');
     } catch (error) {
       console.error("Email/Password Login Error:", error);
-      let description = 'Invalid email or password. Please try again.';
+      let description = 'An unexpected error occurred. Please try again.';
        if (error instanceof FirebaseError) {
           if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
             description = 'Invalid email or password. Please try again.';
+          } else if (error.code === 'auth/configuration-not-found') {
+            description = 'Email/Password sign-in is not enabled in your Firebase project. Please enable it in the Firebase console.';
           }
         }
       toast({
@@ -65,7 +68,7 @@ export default function LoginPage() {
         if (error.code === 'auth/popup-closed-by-user') {
           description = 'Login process was cancelled. Please try again.';
         } else if (error.code === 'auth/configuration-not-found') {
-          description = 'Google Sign-in is not enabled in your Firebase project. Please contact support.';
+          description = 'Google Sign-in is not enabled in your Firebase project. Please enable it in the Firebase console and add the authorized domain.';
         }
       }
       toast({
