@@ -8,8 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { fiiDiiData as generateFiiDiiData } from "@/lib/data"
 import { Landmark } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { DatePicker } from "@/components/ui/date-picker";
 
 const formatCurrency = (value: number) => {
   const absValue = Math.abs(value);
@@ -67,39 +67,27 @@ const MarketDataTable = ({ data }: { data: DailyFlows[] }) => (
     </div>
 );
 
-const months = [
-    { value: 0, label: 'January' }, { value: 1, label: 'February' }, { value: 2, label: 'March' }, 
-    { value: 3, label: 'April' }, { value: 4, label: 'May' }, { value: 5, label: 'June' },
-    { value: 6, label: 'July' }, { value: 7, label: 'August' }, { value: 8, label: 'September' },
-    { value: 9, label: 'October' }, { value: 10, label: 'November' }, { value: 11, label: 'December' }
-];
-
-const currentYear = new Date().getFullYear();
-const years = Array.from({ length: 5 }, (_, i) => currentYear - i);
-
-
 export function FiiDiiData() {
   const [data, setData] = useState<FiiDiiData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
-  const [selectedYear, setSelectedYear] = useState(currentYear);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
 
-  const fetchData = (month?: number, year?: number, days?: number) => {
+  const fetchData = (date?: Date, days?: number) => {
       setIsLoading(true);
       // Simulate API call
       setTimeout(() => {
-        setData(generateFiiDiiData(month, year, days));
+        setData(generateFiiDiiData(date, days));
         setIsLoading(false);
       }, 500);
   };
   
   useEffect(() => {
     // Fetch last 2 days of data by default on initial load
-    fetchData(undefined, undefined, 2);
+    fetchData(undefined, 2);
   }, []);
 
   const handleFetchData = () => {
-    fetchData(selectedMonth, selectedYear);
+    fetchData(selectedDate);
   };
 
 
@@ -116,25 +104,8 @@ export function FiiDiiData() {
                 </CardDescription>
             </div>
              <div className="flex items-end gap-2">
-                <div className="grid gap-1.5">
-                    <Select value={selectedMonth.toString()} onValueChange={(v) => setSelectedMonth(parseInt(v))}>
-                        <SelectTrigger className="w-[120px]">
-                            <SelectValue placeholder="Month" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {months.map(m => <SelectItem key={m.value} value={m.value.toString()}>{m.label}</SelectItem>)}
-                        </SelectContent>
-                    </Select>
-                </div>
-                <div className="grid gap-1.5">
-                    <Select value={selectedYear.toString()} onValueChange={(v) => setSelectedYear(parseInt(v))}>
-                        <SelectTrigger className="w-[100px]">
-                            <SelectValue placeholder="Year" />
-                        </SelectTrigger>
-                        <SelectContent>
-                             {years.map(y => <SelectItem key={y} value={y.toString()}>{y}</SelectItem>)}
-                        </SelectContent>
-                    </Select>
+                 <div className="grid gap-1.5">
+                    <DatePicker date={selectedDate} setDate={setSelectedDate} />
                 </div>
                 <Button onClick={handleFetchData} disabled={isLoading}>
                   {isLoading ? 'Loading...' : 'Fetch'}
@@ -148,7 +119,7 @@ export function FiiDiiData() {
              <Skeleton className="h-10 w-full" />
              <Skeleton className="h-40 w-full" />
           </div>
-        ) : data ? (
+        ) : data && data.cash.length > 0 ? (
           <Tabs defaultValue="cash">
               <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="cash">Cash Market</TabsTrigger>
@@ -166,7 +137,7 @@ export function FiiDiiData() {
               </TabsContent>
           </Tabs>
         ) : (
-            <p>No data available for the selected period.</p>
+            <p className="text-center py-8 text-muted-foreground">No data available for the selected period.</p>
         )}
       </CardContent>
     </Card>

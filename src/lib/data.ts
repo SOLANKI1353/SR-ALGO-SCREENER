@@ -327,14 +327,14 @@ export const advanceDeclineData = [
 ];
 
 
-const generateDailyFlows = (month: number, year: number, days?: number) => {
-    const dataPoints = days ? days : getDaysInMonth(new Date(year, month));
-    const startDate = days ? startOfToday() : new Date(year, month, 1);
+const generateDailyFlows = (date: Date, days?: number) => {
+    const dataPoints = days || 1;
+    const startDate = days ? startOfToday() : date;
 
     const generatedData = Array.from({length: dataPoints}).map((_, i) => {
-        const date = subDays(startDate, i);
+        const currentDate = subDays(startDate, i);
         return {
-            date: format(date, 'dd MMM yyyy'),
+            date: format(currentDate, 'dd MMM yyyy'),
             fii: parseFloat(((Math.random() - 0.45) * 8000).toFixed(2)),
             dii: parseFloat(((Math.random() - 0.55) * 6000).toFixed(2))
         };
@@ -343,13 +343,13 @@ const generateDailyFlows = (month: number, year: number, days?: number) => {
         return dayOfWeek !== 0 && dayOfWeek !== 6;
     });
 
-    return days ? generatedData.slice(0, days) : generatedData.reverse();
+    return days ? generatedData.slice(0, days) : generatedData;
 };
 
-export const fiiDiiData = (month: number = new Date().getMonth(), year: number = new Date().getFullYear(), days?: number) => {
+export const fiiDiiData = (date: Date = new Date(), days?: number) => {
     return {
-        cash: generateDailyFlows(month, year, days).map(d => ({...d, dii: parseFloat(((Math.random() - 0.48) * 6000).toFixed(2))})),
-        indexFutures: generateDailyFlows(month, year, days),
-        stockFutures: generateDailyFlows(month, year, days)
+        cash: generateDailyFlows(date, days).map(d => ({...d, dii: parseFloat(((Math.random() - 0.48) * 6000).toFixed(2))})),
+        indexFutures: generateDailyFlows(date, days),
+        stockFutures: generateDailyFlows(date, days)
     };
 };
