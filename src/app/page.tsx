@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Flame } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { signInWithGoogle } from '@/lib/firebase';
+import { signInWithGoogle, signInWithEmail } from '@/lib/firebase';
 import { FirebaseError } from 'firebase/app';
 
 export default function LoginPage() {
@@ -20,27 +20,33 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setGoogleIsLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate a network request
-    setTimeout(() => {
-      if (email === 'admin@example.com' && password === 'admin') {
-        toast({
-          title: 'Login Successful',
-          description: 'Welcome back!',
-        });
-        router.push('/dashboard');
-      } else {
-        toast({
-          variant: 'destructive',
-          title: 'Login Failed',
-          description: 'Invalid email or password. Please try again.',
-        });
-      }
+    try {
+      await signInWithEmail(email, password);
+      toast({
+        title: 'Login Successful',
+        description: 'Welcome back!',
+      });
+      router.push('/dashboard');
+    } catch (error) {
+      console.error("Email/Password Login Error:", error);
+      let description = 'Invalid email or password. Please try again.';
+       if (error instanceof FirebaseError) {
+          if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+            description = 'Invalid email or password. Please try again.';
+          }
+        }
+      toast({
+        variant: 'destructive',
+        title: 'Login Failed',
+        description,
+      });
+    } finally {
       setIsLoading(false);
-    }, 500);
+    }
   };
   
   const handleGoogleLogin = async () => {
@@ -90,7 +96,7 @@ export default function LoginPage() {
                 <Input 
                   id="email" 
                   type="email" 
-                  placeholder="admin@example.com" 
+                  placeholder="m@example.com" 
                   required 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -107,7 +113,7 @@ export default function LoginPage() {
                 <Input 
                   id="password" 
                   type="password" 
-                  placeholder="admin"
+                  placeholder="********"
                   required 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}

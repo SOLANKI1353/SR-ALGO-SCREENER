@@ -1,5 +1,11 @@
 import { initializeApp, getApp, getApps } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { 
+  getAuth, 
+  GoogleAuthProvider, 
+  signInWithPopup,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword
+} from "firebase/auth";
 
 // Your web app's Firebase configuration.
 // This is safe to expose on the client-side.
@@ -17,17 +23,26 @@ const requiredConfig = ["apiKey", "authDomain", "projectId"];
 const missingConfig = requiredConfig.filter(key => !firebaseConfig[key as keyof typeof firebaseConfig]);
 
 if (missingConfig.length > 0) {
-    console.error("Firebase config is missing required values:", missingConfig);
+    const errorMessage = `Missing Firebase config values: ${missingConfig.join(", ")}. Please check your .env.local file.`;
+    console.error(errorMessage);
     // This will prevent Firebase from being initialized with a partial config
-    throw new Error(`Missing Firebase config values: ${missingConfig.join(", ")}. Please check your .env file.`);
+    throw new Error(errorMessage);
 }
 
 
 // Initialize Firebase
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 export const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
+const googleProvider = new GoogleAuthProvider();
 
 export const signInWithGoogle = () => {
-    return signInWithPopup(auth, provider);
+    return signInWithPopup(auth, googleProvider);
+};
+
+export const signUpWithEmail = (email, password) => {
+    return createUserWithEmailAndPassword(auth, email, password);
+};
+
+export const signInWithEmail = (email, password) => {
+    return signInWithEmailAndPassword(auth, email, password);
 };

@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Flame } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { signInWithGoogle } from '@/lib/firebase';
+import { signInWithGoogle, signUpWithEmail } from '@/lib/firebase';
 import { FirebaseError } from 'firebase/app';
 import { useState } from 'react';
 
@@ -22,21 +22,35 @@ export default function SignupPage() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // In a real app, you would use Firebase Auth or another service
-    // to create a user with email and password.
-    // For this demo, we'll just simulate a successful signup.
-    setTimeout(() => {
-      toast({
-        title: 'Sign-up Successful',
-        description: 'Welcome!',
-      });
-      router.push('/dashboard');
-      setIsLoading(false);
-    }, 500);
+    try {
+        await signUpWithEmail(email, password);
+        toast({
+            title: 'Sign-up Successful',
+            description: 'Welcome! You can now log in.',
+        });
+        router.push('/dashboard');
+    } catch (error) {
+        console.error("Email/Password Signup Error:", error);
+        let description = 'An unexpected error occurred. Please try again.';
+        if (error instanceof FirebaseError) {
+            if (error.code === 'auth/email-already-in-use') {
+                description = 'This email is already in use. Please try another email or log in.';
+            } else if (error.code === 'auth/weak-password') {
+                description = 'The password is too weak. It must be at least 6 characters long.';
+            }
+        }
+        toast({
+            variant: 'destructive',
+            title: 'Sign-up Failed',
+            description,
+        });
+    } finally {
+        setIsLoading(false);
+    }
   };
 
   const handleGoogleLogin = async () => {
@@ -118,7 +132,8 @@ export default function SignupPage() {
               <Label htmlFor="password">Password</Label>
               <Input 
                 id="password" 
-                type="password" 
+                type="password"
+                placeholder="********"
                 required 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -128,7 +143,7 @@ export default function SignupPage() {
             <Button type="submit" className="w-full" disabled={isLoading || isGoogleLoading}>
               {isLoading ? 'Creating account...' : 'Create an account'}
             </Button>
-            <Button variant="outline" className="w-full" onClick={handleGoogleLogin} disabled={isGoogleLoading || isLoading}>
+            <Button variant="outline" type="button" className="w-full" onClick={handleGoogleLogin} disabled={isGoogleLoading || isLoading}>
               {isGoogleLoading ? 'Signing up...' : 'Sign up with Google'}
             </Button>
           </form>
