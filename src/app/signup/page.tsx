@@ -16,6 +16,28 @@ export default function SignupPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isGoogleLoading, setGoogleIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+
+  const handleSignup = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    // In a real app, you would use Firebase Auth or another service
+    // to create a user with email and password.
+    // For this demo, we'll just simulate a successful signup.
+    setTimeout(() => {
+      toast({
+        title: 'Sign-up Successful',
+        description: 'Welcome!',
+      });
+      router.push('/dashboard');
+      setIsLoading(false);
+    }, 500);
+  };
 
   const handleGoogleLogin = async () => {
     setGoogleIsLoading(true);
@@ -46,7 +68,6 @@ export default function SignupPage() {
     }
   };
 
-
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
       <Card className="mx-auto max-w-sm">
@@ -58,30 +79,59 @@ export default function SignupPage() {
           <CardDescription>Enter your information to create an account</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          <form onSubmit={handleSignup} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="first-name">First name</Label>
-              <Input id="first-name" placeholder="Max" required />
+              <Input 
+                id="first-name" 
+                placeholder="Max" 
+                required 
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                disabled={isLoading || isGoogleLoading}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="last-name">Last name</Label>
-              <Input id="last-name" placeholder="Robinson" required />
+              <Input 
+                id="last-name" 
+                placeholder="Robinson" 
+                required 
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                disabled={isLoading || isGoogleLoading}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="m@example.com" required />
+              <Input 
+                id="email" 
+                type="email" 
+                placeholder="m@example.com" 
+                required 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading || isGoogleLoading}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" required />
+              <Input 
+                id="password" 
+                type="password" 
+                required 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading || isGoogleLoading}
+              />
             </div>
-            <Button type="submit" className="w-full" asChild>
-                <Link href="/dashboard">Create an account</Link>
+            <Button type="submit" className="w-full" disabled={isLoading || isGoogleLoading}>
+              {isLoading ? 'Creating account...' : 'Create an account'}
             </Button>
-            <Button variant="outline" className="w-full" onClick={handleGoogleLogin} disabled={isGoogleLoading}>
+            <Button variant="outline" className="w-full" onClick={handleGoogleLogin} disabled={isGoogleLoading || isLoading}>
               {isGoogleLoading ? 'Signing up...' : 'Sign up with Google'}
             </Button>
-          </div>
+          </form>
           <div className="mt-4 text-center text-sm">
             Already have an account?{' '}
             <Link href="/" className="underline">
