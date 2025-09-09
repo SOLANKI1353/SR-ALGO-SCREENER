@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Flame } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { signInWithGoogle } from '@/lib/firebase';
+import { FirebaseError } from 'firebase/app';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -38,10 +39,35 @@ export default function LoginPage() {
         router.push('/dashboard');
     } catch (error) {
         console.error("Google Login Error:", error);
+        let title = 'Google Login Failed';
+        let description = 'An unexpected error occurred. Please try again.';
+
+        if (error instanceof FirebaseError) {
+            title = `Firebase Error (${error.code})`;
+            switch(error.code) {
+                case 'auth/configuration-not-found':
+                    description = "Google Sign-In is not enabled in your Firebase console. Please go to Authentication -> Sign-in method and enable the Google provider.";
+                    break;
+                case 'auth/cancelled-popup-request':
+                case 'auth/popup-closed-by-user':
+                    title = 'Login Canceled';
+                    description = 'You closed the login window before completing the process. Please try again.';
+                    break;
+                case 'auth/popup-blocked':
+                    title = 'Popup Blocked';
+                    description = 'Your browser blocked the Google Sign-In popup. Please allow popups for this site and try again.';
+                    break;
+                default:
+                    description = `An unknown Firebase error occurred: ${error.message}`;
+                    break;
+            }
+        }
+        
         toast({
             variant: 'destructive',
-            title: 'Google Login Failed',
-            description: 'Could not sign in with Google. Please try again.',
+            title: title,
+            description: description,
+            duration: 9000,
         });
     } finally {
         setIsSigningIn(false);
