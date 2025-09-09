@@ -231,3 +231,14 @@ export const optionChainData = {
     options: generateOptionsData(2980)
   }
 }
+
+export const advanceDeclineData = [
+  { name: 'NIFTY 50', advances: 35, declines: 15 },
+  { name: 'NIFTY BANK', advances: 8, declines: 4 },
+  { name: 'NIFTY IT', advances: 3, declines: 7 },
+  { name: 'NIFTY FMCG', advances: 5, declines: 10 },
+  { name: 'NIFTY AUTO', advances: 12, declines: 3 },
+  { name: 'NIFTY PHARMA', advances: 6, declines: 4 },
+  { name: 'NIFTY METAL', advances: 9, declines: 1 },
+  { name: 'NIFTY REALTY', advances: 2, declines: 8 },
+];
