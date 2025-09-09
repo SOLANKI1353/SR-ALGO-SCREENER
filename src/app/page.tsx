@@ -9,69 +9,35 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Flame } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { signInWithGoogle } from '@/lib/firebase';
-import { FirebaseError } from 'firebase/app';
 
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isSigningIn, setIsSigningIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email === 'admin@example.com' && password === 'admin') {
-      router.push('/dashboard');
-    } else {
-      toast({
-        variant: 'destructive',
-        title: 'Login Failed',
-        description: 'Invalid email or password.',
-      });
-    }
-  };
+    setIsLoading(true);
 
-  const handleGoogleLogin = async () => {
-    setIsSigningIn(true);
-    try {
-        await signInWithGoogle();
-        router.push('/dashboard');
-    } catch (error) {
-        console.error("Google Login Error:", error);
-        let title = 'Google Login Failed';
-        let description = 'An unexpected error occurred. Please try again.';
-
-        if (error instanceof FirebaseError) {
-            title = `Firebase Error (${error.code})`;
-            switch(error.code) {
-                case 'auth/configuration-not-found':
-                    description = "Google Sign-In is not enabled in your Firebase console. Please go to Authentication -> Sign-in method and enable the Google provider.";
-                    break;
-                case 'auth/cancelled-popup-request':
-                case 'auth/popup-closed-by-user':
-                    title = 'Login Canceled';
-                    description = 'You closed the login window before completing the process. Please try again.';
-                    break;
-                case 'auth/popup-blocked':
-                    title = 'Popup Blocked';
-                    description = 'Your browser blocked the Google Sign-In popup. Please allow popups for this site and try again.';
-                    break;
-                default:
-                    description = `An unknown Firebase error occurred: ${error.message}`;
-                    break;
-            }
-        }
-        
+    // Simulate a network request
+    setTimeout(() => {
+      if (email === 'admin@example.com' && password === 'admin') {
         toast({
-            variant: 'destructive',
-            title: title,
-            description: description,
-            duration: 9000,
+          title: 'Login Successful',
+          description: 'Welcome back!',
         });
-    } finally {
-        setIsSigningIn(false);
-    }
+        router.push('/dashboard');
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Login Failed',
+          description: 'Invalid email or password. Please try again.',
+        });
+      }
+      setIsLoading(false);
+    }, 500);
   };
 
   return (
@@ -82,7 +48,7 @@ export default function LoginPage() {
             <Flame className="h-8 w-8 text-primary" />
             <CardTitle className="text-3xl font-bold">Sr Algo</CardTitle>
           </div>
-          <CardDescription>Enter your email below to login to your account</CardDescription>
+          <CardDescription>Enter your credentials to access your account</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
@@ -95,6 +61,7 @@ export default function LoginPage() {
                 required 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
               />
             </div>
             <div className="space-y-2">
@@ -111,13 +78,11 @@ export default function LoginPage() {
                 required 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
               />
             </div>
-            <Button type="submit" className="w-full" disabled={isSigningIn}>
-              Login
-            </Button>
-            <Button variant="outline" className="w-full" onClick={handleGoogleLogin} disabled={isSigningIn}>
-              {isSigningIn ? 'Signing in...' : 'Login with Google'}
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? 'Logging in...' : 'Login'}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
