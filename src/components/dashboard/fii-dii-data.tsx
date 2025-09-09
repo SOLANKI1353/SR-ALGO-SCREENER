@@ -1,11 +1,13 @@
 
 "use client"
 
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { fiiDiiData } from "@/lib/data"
+import { fiiDiiData as generateFiiDiiData } from "@/lib/data"
 import { Landmark } from "lucide-react"
+import { Skeleton } from "@/components/ui/skeleton";
 
 const formatCurrency = (value: number) => {
   const absValue = Math.abs(value);
@@ -21,6 +23,13 @@ type DailyFlows = {
     fii: number;
     dii: number;
 };
+
+type FiiDiiData = {
+    cash: DailyFlows[];
+    indexFutures: DailyFlows[];
+    stockFutures: DailyFlows[];
+};
+
 
 const MarketDataTable = ({ data }: { data: DailyFlows[] }) => (
      <div className="overflow-x-auto">
@@ -58,6 +67,11 @@ const MarketDataTable = ({ data }: { data: DailyFlows[] }) => (
 
 
 export function FiiDiiData() {
+  const [data, setData] = useState<FiiDiiData | null>(null);
+
+  useEffect(() => {
+    setData(generateFiiDiiData);
+  }, []);
 
   return (
     <Card>
@@ -70,22 +84,29 @@ export function FiiDiiData() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="cash">
-            <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="cash">Cash Market</TabsTrigger>
-                <TabsTrigger value="index-futures">Index Futures</TabsTrigger>
-                <TabsTrigger value="stock-futures">Stock Futures</TabsTrigger>
-            </TabsList>
-            <TabsContent value="cash">
-                <MarketDataTable data={fiiDiiData.cash} />
-            </TabsContent>
-            <TabsContent value="index-futures">
-                <MarketDataTable data={fiiDiiData.indexFutures} />
-            </TabsContent>
-            <TabsContent value="stock-futures">
-                 <MarketDataTable data={fiiDiiData.stockFutures} />
-            </TabsContent>
-        </Tabs>
+        {!data ? (
+          <div className="space-y-4">
+             <Skeleton className="h-10 w-full" />
+             <Skeleton className="h-40 w-full" />
+          </div>
+        ) : (
+          <Tabs defaultValue="cash">
+              <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="cash">Cash Market</TabsTrigger>
+                  <TabsTrigger value="index-futures">Index Futures</TabsTrigger>
+                  <TabsTrigger value="stock-futures">Stock Futures</TabsTrigger>
+              </TabsList>
+              <TabsContent value="cash">
+                  <MarketDataTable data={data.cash} />
+              </TabsContent>
+              <TabsContent value="index-futures">
+                  <MarketDataTable data={data.indexFutures} />
+              </TabsContent>
+              <TabsContent value="stock-futures">
+                   <MarketDataTable data={data.stockFutures} />
+              </TabsContent>
+          </Tabs>
+        )}
       </CardContent>
     </Card>
   )
