@@ -59,7 +59,7 @@ function TradingViewWidgetComponent() {
             </div>
         </div>
       </CardHeader>
-      <CardContent className="h-[400px] w-full p-0">
+      <CardContent className="h-[600px] w-full p-0">
         <div className="tradingview-widget-container h-full" ref={container}>
           <div className="tradingview-widget-container__widget h-full"></div>
         </div>
