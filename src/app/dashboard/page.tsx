@@ -3,6 +3,7 @@ import { Watchlist } from '@/components/dashboard/watchlist';
 import { Heatmap } from '@/components/dashboard/heatmap';
 import { AiSignals } from '@/components/dashboard/ai-signals';
 import { TradingViewWidget } from '@/components/dashboard/trading-view-widget';
+import { FiiDiiData } from '@/components/dashboard/fii-dii-data';
 
 export default function DashboardPage() {
   return (
@@ -21,6 +22,7 @@ export default function DashboardPage() {
       </div>
       <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-1">
         <AiSignals />
+        <FiiDiiData />
       </div>
     </div>
   );

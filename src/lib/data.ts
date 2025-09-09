@@ -242,3 +242,17 @@ export const advanceDeclineData = [
   { name: 'NIFTY METAL', advances: 9, declines: 1 },
   { name: 'NIFTY REALTY', advances: 2, declines: 8 },
 ];
+
+export const fiiDiiData = {
+    date: format(subDays(today, 1), 'dd MMM yyyy'),
+    fii: {
+        buy: 8210.56,
+        sell: 7530.42,
+        net: 680.14
+    },
+    dii: {
+        buy: 9540.88,
+        sell: 9870.12,
+        net: -329.24
+    }
+};
