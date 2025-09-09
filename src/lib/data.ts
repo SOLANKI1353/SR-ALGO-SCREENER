@@ -16,6 +16,30 @@ export const topMovers = {
     { ticker: "TECHM", price: 1380.00, change: "-1.9%", volume: "4.8M" },
     { ticker: "WIPRO", price: 475.60, change: "-1.5%", volume: "7.3M" },
   ],
+  mostActive: [
+    { ticker: "HDFCBANK", price: 1520.60, change: "+0.8%", volume: "10.2M" },
+    { ticker: "RELIANCE", price: 2950.80, change: "+1.2%", volume: "8.1M" },
+    { ticker: "WIPRO", price: 475.60, change: "-1.5%", volume: "7.3M" },
+    { ticker: "CIPLA", price: 1495.30, change: "-3.2%", volume: "6.2M" },
+    { ticker: "INFY", price: 1650.45, change: "-0.5%", volume: "6.5M" },
+  ],
+  fiftyTwoWeekHigh: [
+    { ticker: "ADANIPORTS", price: 1455.00, change: "+6.0%", high: 1460.00, low: 760.00 },
+    { ticker: "BPCL", price: 637.00, change: "+4.5%", high: 640.00, low: 320.00 },
+    { ticker: "TATASTEEL", price: 178.00, change: "+4.8%", high: 180.00, low: 105.00 },
+    { ticker: "HEROMOTOCO", price: 5610.00, change: "+3.1%", high: 5625.00, low: 2800.00 },
+  ],
+  fiftyTwoWeekLow: [
+    { ticker: "UPL", price: 545.00, change: "-1.2%", high: 800.00, low: 542.00 },
+    { ticker: "ZEEL", price: 148.50, change: "-2.5%", high: 280.00, low: 148.00 },
+    { ticker: "ASIANPAINT", price: 2850.00, change: "-0.5%", high: 3500.00, low: 2845.00 },
+  ],
+  volumeBuzzers: [
+    { ticker: "IDEA", price: 17.50, change: "+8.2%", volume: "150.3M" },
+    { ticker: "YESBANK", price: 24.10, change: "+3.5%", volume: "95.1M" },
+    { ticker: "PNB", price: 125.00, change: "+2.5%", volume: "50.8M" },
+    { ticker: "SAIL", price: 155.20, change: "+4.1%", volume: "45.2M" },
+  ],
 };
 
 export const initialWatchlist = [
