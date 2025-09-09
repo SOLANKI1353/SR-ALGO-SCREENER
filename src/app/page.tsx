@@ -10,8 +10,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Flame } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { signInWithGoogle, signInWithEmail } from '@/lib/firebase';
-import { FirebaseError } from 'firebase/app';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -19,65 +17,28 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isGoogleLoading, setGoogleIsLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    try {
-      await signInWithEmail(email, password);
-      toast({
-        title: 'Login Successful',
-        description: 'Welcome back!',
-      });
-      router.push('/dashboard');
-    } catch (error) {
-      console.error("Email/Password Login Error:", error);
-      let description = 'An unexpected error occurred. Please try again.';
-       if (error instanceof FirebaseError) {
-          if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-            description = 'Invalid email or password. Please try again.';
-          } else if (error.code === 'auth/configuration-not-found') {
-            description = 'Email/Password sign-in is not enabled in your Firebase project. Please enable it in the Firebase console.';
-          }
-        }
-      toast({
-        variant: 'destructive',
-        title: 'Login Failed',
-        description,
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  
-  const handleGoogleLogin = async () => {
-    setGoogleIsLoading(true);
-    try {
-      await signInWithGoogle();
-      toast({
-        title: 'Login Successful',
-        description: 'Welcome!',
-      });
-      router.push('/dashboard');
-    } catch (error) {
-      console.error("Google Login Error:", error);
-      let description = 'An unexpected error occurred. Please try again.';
-      if (error instanceof FirebaseError) {
-        if (error.code === 'auth/popup-closed-by-user') {
-          description = 'Login process was cancelled. Please try again.';
-        } else if (error.code === 'auth/configuration-not-found') {
-          description = 'Google Sign-in is not enabled in your Firebase project. Please enable it in the Firebase console and add the authorized domain.';
-        }
-      }
-      toast({
-        variant: 'destructive',
-        title: 'Google Login Failed',
-        description,
-      });
-    } finally {
-      setGoogleIsLoading(false);
+    // Simulate login
+    if (email && password) {
+       setTimeout(() => {
+        toast({
+          title: 'Login Successful',
+          description: 'Welcome! This is a simulated login.',
+        });
+        router.push('/dashboard');
+        setIsLoading(false);
+      }, 1000);
+    } else {
+        toast({
+            variant: 'destructive',
+            title: 'Login Failed',
+            description: 'Please enter an email and password.',
+        });
+        setIsLoading(false);
     }
   };
 
@@ -89,7 +50,7 @@ export default function LoginPage() {
             <Flame className="h-8 w-8 text-primary" />
             <CardTitle className="text-3xl font-bold">Sr Algo</CardTitle>
           </div>
-          <CardDescription>Enter your credentials to access your account</CardDescription>
+          <CardDescription>Enter any credentials to access the demo dashboard</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -103,7 +64,7 @@ export default function LoginPage() {
                   required 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  disabled={isLoading || isGoogleLoading}
+                  disabled={isLoading}
                 />
               </div>
               <div className="space-y-2">
@@ -120,16 +81,13 @@ export default function LoginPage() {
                   required 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  disabled={isLoading || isGoogleLoading}
+                  disabled={isLoading}
                 />
               </div>
-              <Button type="submit" className="w-full" disabled={isLoading || isGoogleLoading}>
+              <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? 'Logging in...' : 'Login'}
               </Button>
             </form>
-            <Button variant="outline" className="w-full" onClick={handleGoogleLogin} disabled={isGoogleLoading || isLoading}>
-              {isGoogleLoading ? 'Signing in...' : 'Login with Google'}
-            </Button>
           </div>
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{' '}

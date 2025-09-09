@@ -9,14 +9,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Flame } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { signInWithGoogle, signUpWithEmail } from '@/lib/firebase';
-import { FirebaseError } from 'firebase/app';
 import { useState } from 'react';
 
 export default function SignupPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const [isGoogleLoading, setGoogleIsLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -27,61 +24,23 @@ export default function SignupPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    try {
-        await signUpWithEmail(email, password);
+    if (firstName && lastName && email && password) {
+      // Simulate signup
+      setTimeout(() => {
         toast({
-            title: 'Sign-up Successful',
-            description: 'Welcome! You can now log in.',
+          title: 'Sign-up Successful',
+          description: 'Welcome! This is a simulated sign-up.',
         });
         router.push('/dashboard');
-    } catch (error) {
-        console.error("Email/Password Signup Error:", error);
-        let description = 'An unexpected error occurred. Please try again.';
-        if (error instanceof FirebaseError) {
-            if (error.code === 'auth/email-already-in-use') {
-                description = 'This email is already in use. Please try another email or log in.';
-            } else if (error.code === 'auth/weak-password') {
-                description = 'The password is too weak. It must be at least 6 characters long.';
-            } else if (error.code === 'auth/configuration-not-found') {
-                description = 'Email/Password sign-up is not enabled in your Firebase project. Please enable it in the Firebase console.';
-            }
-        }
+        setIsLoading(false);
+      }, 1000);
+    } else {
         toast({
             variant: 'destructive',
             title: 'Sign-up Failed',
-            description,
+            description: 'Please fill out all fields.',
         });
-    } finally {
         setIsLoading(false);
-    }
-  };
-
-  const handleGoogleLogin = async () => {
-    setGoogleIsLoading(true);
-    try {
-      await signInWithGoogle();
-      toast({
-        title: 'Sign-up Successful',
-        description: 'Welcome!',
-      });
-      router.push('/dashboard');
-    } catch (error) {
-      console.error("Google Login Error:", error);
-      let description = 'An unexpected error occurred. Please try again.';
-       if (error instanceof FirebaseError) {
-        if (error.code === 'auth/popup-closed-by-user') {
-          description = 'Sign up process was cancelled. Please try again.';
-        } else if (error.code === 'auth/configuration-not-found') {
-          description = 'Google Sign-in is not enabled in your Firebase project. Please contact support.';
-        }
-      }
-      toast({
-        variant: 'destructive',
-        title: 'Google Sign-up Failed',
-        description,
-      });
-    } finally {
-      setGoogleIsLoading(false);
     }
   };
 
@@ -106,7 +65,7 @@ export default function SignupPage() {
                   required 
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  disabled={isLoading || isGoogleLoading}
+                  disabled={isLoading}
                 />
               </div>
               <div className="space-y-2">
@@ -117,7 +76,7 @@ export default function SignupPage() {
                   required 
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  disabled={isLoading || isGoogleLoading}
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -130,7 +89,7 @@ export default function SignupPage() {
                 required 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                disabled={isLoading || isGoogleLoading}
+                disabled={isLoading}
               />
             </div>
             <div className="space-y-2">
@@ -142,14 +101,11 @@ export default function SignupPage() {
                 required 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                disabled={isLoading || isGoogleLoading}
+                disabled={isLoading}
               />
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading || isGoogleLoading}>
+            <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? 'Creating account...' : 'Create an account'}
-            </Button>
-            <Button variant="outline" type="button" className="w-full" onClick={handleGoogleLogin} disabled={isGoogleLoading || isLoading}>
-              {isGoogleLoading ? 'Signing up...' : 'Sign up with Google'}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
