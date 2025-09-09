@@ -30,6 +30,8 @@ function TradingViewWidgetComponent() {
           "style": "1",
           "locale": "in",
           "enable_publishing": false,
+          "withdateranges": true,
+          "hide_side_toolbar": false,
           "allow_symbol_change": true,
           "calendar": false,
           "support_host": "https://www.tradingview.com"
