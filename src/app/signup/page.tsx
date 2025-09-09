@@ -1,11 +1,52 @@
+"use client";
+
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Flame } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { signInWithGoogle } from '@/lib/firebase';
+import { FirebaseError } from 'firebase/app';
+import { useState } from 'react';
 
 export default function SignupPage() {
+  const router = useRouter();
+  const { toast } = useToast();
+  const [isGoogleLoading, setGoogleIsLoading] = useState(false);
+
+  const handleGoogleLogin = async () => {
+    setGoogleIsLoading(true);
+    try {
+      await signInWithGoogle();
+      toast({
+        title: 'Sign-up Successful',
+        description: 'Welcome!',
+      });
+      router.push('/dashboard');
+    } catch (error) {
+      console.error("Google Login Error:", error);
+      let description = 'An unexpected error occurred. Please try again.';
+       if (error instanceof FirebaseError) {
+        if (error.code === 'auth/popup-closed-by-user') {
+          description = 'Sign up process was cancelled. Please try again.';
+        } else if (error.code === 'auth/configuration-not-found') {
+          description = 'Google Sign-in is not enabled in your Firebase project. Please contact support.';
+        }
+      }
+      toast({
+        variant: 'destructive',
+        title: 'Google Sign-up Failed',
+        description,
+      });
+    } finally {
+      setGoogleIsLoading(false);
+    }
+  };
+
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
       <Card className="mx-auto max-w-sm">
@@ -37,8 +78,8 @@ export default function SignupPage() {
             <Button type="submit" className="w-full" asChild>
                 <Link href="/dashboard">Create an account</Link>
             </Button>
-            <Button variant="outline" className="w-full">
-              Sign up with Google
+            <Button variant="outline" className="w-full" onClick={handleGoogleLogin} disabled={isGoogleLoading}>
+              {isGoogleLoading ? 'Signing up...' : 'Sign up with Google'}
             </Button>
           </div>
           <div className="mt-4 text-center text-sm">
