@@ -13,6 +13,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Info } from "lucide-react"
 
 export default function SettingsPage() {
   const { toast } = useToast()
@@ -47,6 +49,13 @@ export default function SettingsPage() {
                 onChange={(e) => setApiKey(e.target.value)}
               />
             </div>
+            <Alert>
+                <Info className="h-4 w-4" />
+                <AlertTitle>Feature Coming Soon!</AlertTitle>
+                <AlertDescription>
+                    Please note: This is a demo application. The API key settings are not yet connected to a live data source. All market data is currently for demonstration purposes only.
+                </AlertDescription>
+            </Alert>
           </form>
         </CardContent>
         <CardFooter className="border-t px-6 py-4">
