@@ -1,5 +1,5 @@
 
-import { format, subDays } from 'date-fns';
+import { format, subDays, getDaysInMonth } from 'date-fns';
 
 export const topMovers = {
   gainers: [
@@ -244,16 +244,26 @@ export const advanceDeclineData = [
 ];
 
 
-const generateDailyFlows = (days: number) => {
-    return Array.from({length: days}).map((_, i) => ({
-        date: format(subDays(new Date(), i + 1), 'dd MMM yyyy'),
-        fii: parseFloat(((Math.random() - 0.45) * 8000).toFixed(2)),
-        dii: parseFloat(((Math.random() - 0.55) * 6000).toFixed(2))
-    }));
+const generateDailyFlows = (month: number, year: number) => {
+    const daysInMonth = getDaysInMonth(new Date(year, month));
+    return Array.from({length: daysInMonth}).map((_, i) => {
+        const day = i + 1;
+        const date = new Date(year, month, day);
+        return {
+            date: format(date, 'dd MMM yyyy'),
+            fii: parseFloat(((Math.random() - 0.45) * 8000).toFixed(2)),
+            dii: parseFloat(((Math.random() - 0.55) * 6000).toFixed(2))
+        };
+    }).filter(d => { // Filter out weekends
+        const dayOfWeek = new Date(d.date).getDay();
+        return dayOfWeek !== 0 && dayOfWeek !== 6;
+    }).reverse();
 };
 
-export const fiiDiiData = {
-    cash: generateDailyFlows(5).map(d => ({...d, dii: parseFloat(((Math.random() - 0.48) * 6000).toFixed(2))})),
-    indexFutures: generateDailyFlows(5),
-    stockFutures: generateDailyFlows(5)
+export const fiiDiiData = (month: number = new Date().getMonth(), year: number = new Date().getFullYear()) => {
+    return {
+        cash: generateDailyFlows(month, year).map(d => ({...d, dii: parseFloat(((Math.random() - 0.48) * 6000).toFixed(2))})),
+        indexFutures: generateDailyFlows(month, year),
+        stockFutures: generateDailyFlows(month, year)
+    };
 };

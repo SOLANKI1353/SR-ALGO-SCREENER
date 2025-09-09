@@ -8,6 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { fiiDiiData as generateFiiDiiData } from "@/lib/data"
 import { Landmark } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 const formatCurrency = (value: number) => {
   const absValue = Math.abs(value);
@@ -65,31 +67,87 @@ const MarketDataTable = ({ data }: { data: DailyFlows[] }) => (
     </div>
 );
 
+const months = [
+    { value: 0, label: 'January' }, { value: 1, label: 'February' }, { value: 2, label: 'March' }, 
+    { value: 3, label: 'April' }, { value: 4, label: 'May' }, { value: 5, label: 'June' },
+    { value: 6, label: 'July' }, { value: 7, label: 'August' }, { value: 8, label: 'September' },
+    { value: 9, label: 'October' }, { value: 10, label: 'November' }, { value: 11, label: 'December' }
+];
+
+const currentYear = new Date().getFullYear();
+const years = Array.from({ length: 5 }, (_, i) => currentYear - i);
+
 
 export function FiiDiiData() {
   const [data, setData] = useState<FiiDiiData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+  const [selectedYear, setSelectedYear] = useState(currentYear);
 
+  const fetchData = (month: number, year: number) => {
+      setIsLoading(true);
+      // Simulate API call
+      setTimeout(() => {
+        setData(generateFiiDiiData(month, year));
+        setIsLoading(false);
+      }, 500);
+  };
+  
   useEffect(() => {
-    setData(generateFiiDiiData);
+    fetchData(selectedMonth, selectedYear);
   }, []);
+
+  const handleFetchData = () => {
+    fetchData(selectedMonth, selectedYear);
+  };
+
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Landmark /> FII & DII Data
-        </CardTitle>
-        <CardDescription>
-          Daily institutional investment activity in Indian markets.
-        </CardDescription>
+      <CardHeader className="gap-4">
+        <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+            <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Landmark /> FII & DII Data
+                </CardTitle>
+                <CardDescription>
+                  Institutional investment activity in Indian markets.
+                </CardDescription>
+            </div>
+             <div className="flex items-end gap-2">
+                <div className="grid gap-1.5">
+                    <Select value={selectedMonth.toString()} onValueChange={(v) => setSelectedMonth(parseInt(v))}>
+                        <SelectTrigger className="w-[120px]">
+                            <SelectValue placeholder="Month" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {months.map(m => <SelectItem key={m.value} value={m.value.toString()}>{m.label}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
+                </div>
+                <div className="grid gap-1.5">
+                    <Select value={selectedYear.toString()} onValueChange={(v) => setSelectedYear(parseInt(v))}>
+                        <SelectTrigger className="w-[100px]">
+                            <SelectValue placeholder="Year" />
+                        </SelectTrigger>
+                        <SelectContent>
+                             {years.map(y => <SelectItem key={y} value={y.toString()}>{y}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
+                </div>
+                <Button onClick={handleFetchData} disabled={isLoading}>
+                  {isLoading ? 'Loading...' : 'Fetch'}
+                </Button>
+            </div>
+        </div>
       </CardHeader>
       <CardContent>
-        {!data ? (
+        {isLoading ? (
           <div className="space-y-4">
              <Skeleton className="h-10 w-full" />
              <Skeleton className="h-40 w-full" />
           </div>
-        ) : (
+        ) : data ? (
           <Tabs defaultValue="cash">
               <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="cash">Cash Market</TabsTrigger>
@@ -106,6 +164,8 @@ export function FiiDiiData() {
                    <MarketDataTable data={data.stockFutures} />
               </TabsContent>
           </Tabs>
+        ) : (
+            <p>No data available for the selected period.</p>
         )}
       </CardContent>
     </Card>
