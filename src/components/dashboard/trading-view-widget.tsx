@@ -8,8 +8,8 @@ import { useTheme } from 'next-themes';
 
 function TradingViewWidgetComponent() {
   const container = useRef<HTMLDivElement>(null);
-  const [symbol, setSymbol] = useState("BSE:RELIANCE");
-  const [inputSymbol, setInputSymbol] = useState("BSE:RELIANCE");
+  const [symbol, setSymbol] = useState("TVC:NIFTY50");
+  const [inputSymbol, setInputSymbol] = useState("TVC:NIFTY50");
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -50,7 +50,7 @@ function TradingViewWidgetComponent() {
             <div className="flex w-full max-w-sm items-center space-x-2">
                 <Input 
                     type="text" 
-                    placeholder="e.g. BSE:TCS" 
+                    placeholder="e.g. TVC:NIFTY50, NSE:RELIANCE" 
                     value={inputSymbol}
                     onChange={(e) => setInputSymbol(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSymbolChange()}
