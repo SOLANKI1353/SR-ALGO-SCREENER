@@ -1,9 +1,17 @@
+
 "use client";
 
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { heatmapData } from "@/lib/data";
+import { heatmapData as initialHeatmapData } from "@/lib/data";
 import { cn } from "@/lib/utils";
+
+type HeatmapItem = {
+    name: string;
+    value: number;
+    marketCap: string;
+};
 
 const getColor = (value: number) => {
   if (value > 2) return "bg-emerald-700 hover:bg-emerald-600";
@@ -14,11 +22,26 @@ const getColor = (value: number) => {
 };
 
 export function Heatmap() {
+  const [heatmapData, setHeatmapData] = useState<HeatmapItem[]>(initialHeatmapData);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setHeatmapData(currentData => 
+        currentData.map(sector => ({
+          ...sector,
+          value: Math.max(-4, Math.min(4, sector.value + (Math.random() - 0.5) * 0.5)),
+        }))
+      );
+    }, 3000); // Update every 3 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Market Heatmap</CardTitle>
-        <CardDescription>Sector performance at a glance (demo data).</CardDescription>
+        <CardDescription>Sector performance at a glance (simulated live data).</CardDescription>
       </CardHeader>
       <CardContent>
         <TooltipProvider>

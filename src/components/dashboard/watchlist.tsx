@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -15,9 +16,35 @@ type WatchlistItem = {
   volume: string;
 };
 
+// Function to generate a random update for a stock
+const generateRandomUpdate = (stock: WatchlistItem): WatchlistItem => {
+    const priceChange = (Math.random() - 0.49) * 10;
+    const newPrice = Math.max(10, stock.price + priceChange);
+    const percentageChange = ((newPrice - stock.price) / stock.price) * 100;
+    
+    return {
+        ...stock,
+        price: newPrice,
+        change: `${percentageChange >= 0 ? '+' : ''}${percentageChange.toFixed(1)}%`,
+        volume: `${(parseFloat(stock.volume) + Math.random() * 0.1 - 0.05).toFixed(1)}M`
+    }
+}
+
+
 export function Watchlist() {
   const [watchlist, setWatchlist] = useState<WatchlistItem[]>(initialWatchlist);
   const [newTicker, setNewTicker] = useState("");
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+        setWatchlist(currentWatchlist => 
+            currentWatchlist.map(stock => generateRandomUpdate(stock))
+        );
+    }, 2000); // Update every 2 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
 
   const handleAddStock = () => {
     if (newTicker.trim() !== "") {
@@ -40,7 +67,7 @@ export function Watchlist() {
     <Card>
       <CardHeader>
         <CardTitle>My Watchlist</CardTitle>
-        <CardDescription>Your curated list of stocks to watch (demo data).</CardDescription>
+        <CardDescription>Your curated list of stocks to watch (simulated live data).</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex w-full max-w-sm items-center space-x-2 mb-4">
