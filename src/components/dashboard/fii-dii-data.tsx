@@ -84,17 +84,18 @@ export function FiiDiiData() {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(currentYear);
 
-  const fetchData = (month: number, year: number) => {
+  const fetchData = (month?: number, year?: number, days?: number) => {
       setIsLoading(true);
       // Simulate API call
       setTimeout(() => {
-        setData(generateFiiDiiData(month, year));
+        setData(generateFiiDiiData(month, year, days));
         setIsLoading(false);
       }, 500);
   };
   
   useEffect(() => {
-    fetchData(selectedMonth, selectedYear);
+    // Fetch last 2 days of data by default on initial load
+    fetchData(undefined, undefined, 2);
   }, []);
 
   const handleFetchData = () => {

@@ -1,6 +1,6 @@
 
 
-import { format, subDays, getDaysInMonth } from 'date-fns';
+import { format, subDays, getDaysInMonth, startOfToday } from 'date-fns';
 
 export const marketOverviewData = [
   {
@@ -327,11 +327,12 @@ export const advanceDeclineData = [
 ];
 
 
-const generateDailyFlows = (month: number, year: number) => {
-    const daysInMonth = getDaysInMonth(new Date(year, month));
-    return Array.from({length: daysInMonth}).map((_, i) => {
-        const day = i + 1;
-        const date = new Date(year, month, day);
+const generateDailyFlows = (month: number, year: number, days?: number) => {
+    const dataPoints = days ? days : getDaysInMonth(new Date(year, month));
+    const startDate = days ? startOfToday() : new Date(year, month, 1);
+
+    const generatedData = Array.from({length: dataPoints}).map((_, i) => {
+        const date = subDays(startDate, i);
         return {
             date: format(date, 'dd MMM yyyy'),
             fii: parseFloat(((Math.random() - 0.45) * 8000).toFixed(2)),
@@ -340,13 +341,15 @@ const generateDailyFlows = (month: number, year: number) => {
     }).filter(d => { // Filter out weekends
         const dayOfWeek = new Date(d.date).getDay();
         return dayOfWeek !== 0 && dayOfWeek !== 6;
-    }).reverse();
+    });
+
+    return days ? generatedData.slice(0, days) : generatedData.reverse();
 };
 
-export const fiiDiiData = (month: number = new Date().getMonth(), year: number = new Date().getFullYear()) => {
+export const fiiDiiData = (month: number = new Date().getMonth(), year: number = new Date().getFullYear(), days?: number) => {
     return {
-        cash: generateDailyFlows(month, year).map(d => ({...d, dii: parseFloat(((Math.random() - 0.48) * 6000).toFixed(2))})),
-        indexFutures: generateDailyFlows(month, year),
-        stockFutures: generateDailyFlows(month, year)
+        cash: generateDailyFlows(month, year, days).map(d => ({...d, dii: parseFloat(((Math.random() - 0.48) * 6000).toFixed(2))})),
+        indexFutures: generateDailyFlows(month, year, days),
+        stockFutures: generateDailyFlows(month, year, days)
     };
 };
