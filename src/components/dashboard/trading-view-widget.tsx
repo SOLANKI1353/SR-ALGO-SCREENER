@@ -9,11 +9,11 @@ import { useTheme } from 'next-themes';
 function TradingViewWidgetComponent() {
   const container = useRef<HTMLDivElement>(null);
   const [symbol, setSymbol] = useState("TVC:NIFTY50");
-  const [inputSymbol, setInputSymbol] = useState("TVC:NIFTY50");
+  const [inputSymbol, setInputSymbol] = useState("NIFTY50");
   const { theme } = useTheme();
 
   useEffect(() => {
-    if (container.current) {
+    if (container.current && symbol) {
         // Clear previous widget
         container.current.innerHTML = '';
         const script = document.createElement("script");
@@ -39,7 +39,17 @@ function TradingViewWidgetComponent() {
   }, [symbol, theme]);
 
   const handleSymbolChange = () => {
-    setSymbol(inputSymbol.toUpperCase());
+    let processedSymbol = inputSymbol.toUpperCase().trim();
+    // If user enters a symbol without a prefix, try to guess it.
+    if (processedSymbol && !processedSymbol.includes(':')) {
+        // A simple heuristic: if it looks like a common index, use TVC. Otherwise, assume it's a stock on NSE.
+        if (['NIFTY50', 'NIFTY', 'SENSEX', 'BANKNIFTY'].includes(processedSymbol)) {
+            processedSymbol = `TVC:${processedSymbol}`;
+        } else {
+            processedSymbol = `NSE:${processedSymbol}`;
+        }
+    }
+    setSymbol(processedSymbol);
   }
 
   return (
@@ -50,7 +60,7 @@ function TradingViewWidgetComponent() {
             <div className="flex w-full max-w-sm items-center space-x-2">
                 <Input 
                     type="text" 
-                    placeholder="e.g. TVC:NIFTY50, NSE:RELIANCE" 
+                    placeholder="e.g. NIFTY50, RELIANCE" 
                     value={inputSymbol}
                     onChange={(e) => setInputSymbol(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSymbolChange()}
@@ -59,7 +69,7 @@ function TradingViewWidgetComponent() {
             </div>
         </div>
       </CardHeader>
-      <CardContent className="h-[800px] w-full p-0">
+      <CardContent className="h-[900px] w-full p-0">
         <div className="tradingview-widget-container h-full" ref={container}>
           <div className="tradingview-widget-container__widget h-full"></div>
         </div>
