@@ -9,12 +9,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Flame } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { signInWithGoogle } from '@/lib/firebase';
 
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isSigningIn, setIsSigningIn] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,6 +28,23 @@ export default function LoginPage() {
         title: 'Login Failed',
         description: 'Invalid email or password.',
       });
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setIsSigningIn(true);
+    try {
+        await signInWithGoogle();
+        router.push('/dashboard');
+    } catch (error) {
+        console.error("Google Login Error:", error);
+        toast({
+            variant: 'destructive',
+            title: 'Google Login Failed',
+            description: 'Could not sign in with Google. Please try again.',
+        });
+    } finally {
+        setIsSigningIn(false);
     }
   };
 
@@ -68,11 +87,11 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full" disabled={isSigningIn}>
               Login
             </Button>
-            <Button variant="outline" className="w-full">
-              Login with Google
+            <Button variant="outline" className="w-full" onClick={handleGoogleLogin} disabled={isSigningIn}>
+              {isSigningIn ? 'Signing in...' : 'Login with Google'}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
