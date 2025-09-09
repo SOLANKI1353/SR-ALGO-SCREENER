@@ -192,3 +192,42 @@ export const openingRangeBreakoutData = {
         { ticker: "ASIANPAINT", breakoutPrice: 2865.00, volume: "1.2M", time: "09:35 AM", breakoutType: 'bearish' as const },
     ]
 }
+
+
+function generateOptionsData(atmPrice: number) {
+  const strikePrices = Array.from({ length: 15 }, (_, i) => atmPrice - (7 * 50) + (i * 50));
+  
+  const generateSide = (isCall: boolean) => {
+    return strikePrices.map(strike => {
+      const isITM = isCall ? strike < atmPrice : strike > atmPrice;
+      const isATM = Math.abs(strike - atmPrice) < 50;
+      return {
+        strike: strike,
+        oi: `${(Math.random() * 50 + (isATM ? 30 : 10)).toFixed(1)}k`,
+        volume: `${(Math.random() * 20 + (isATM ? 15 : 5)).toFixed(1)}k`,
+        iv: `${(Math.random() * 15 + 10).toFixed(1)}%`,
+        ltp: Math.max(0.05, (isCall ? Math.max(0, atmPrice - strike) : Math.max(0, strike - atmPrice)) + (Math.random() * 30 + 5) * (isITM ? 1 : 0.5)).toFixed(2),
+      };
+    });
+  };
+
+  return {
+    calls: generateSide(true),
+    puts: generateSide(false),
+  };
+}
+
+export const optionChainData = {
+  "NIFTY": {
+    underlyingPrice: 24250.50,
+    options: generateOptionsData(24250)
+  },
+  "BANKNIFTY": {
+    underlyingPrice: 52350.20,
+    options: generateOptionsData(52350)
+  },
+  "RELIANCE": {
+    underlyingPrice: 2980.00,
+    options: generateOptionsData(2980)
+  }
+}

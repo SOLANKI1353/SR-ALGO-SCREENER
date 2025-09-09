@@ -14,7 +14,8 @@ import {
   Flame,
   LayoutDashboard,
   Repeat,
-  ScanSearch
+  ScanSearch,
+  Layers
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -24,6 +25,7 @@ export function AppSidebar() {
   const navItems = [
     { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
     { href: "/dashboard/screeners", icon: ScanSearch, label: "Screeners" },
+    { href: "/dashboard/options", icon: Layers, label: "Options" },
     { href: "/dashboard/backtesting", icon: Repeat, label: "Backtesting" },
     { href: "/dashboard/settings", icon: Settings, label: "Settings", isBottom: true },
   ]
