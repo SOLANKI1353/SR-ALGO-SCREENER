@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -41,6 +42,8 @@ export default function SignupPage() {
                 description = 'This email is already in use. Please try another email or log in.';
             } else if (error.code === 'auth/weak-password') {
                 description = 'The password is too weak. It must be at least 6 characters long.';
+            } else if (error.code === 'auth/configuration-not-found') {
+                description = 'Email/Password sign-up is not enabled in your Firebase project. Please enable it in the Firebase console.';
             }
         }
         toast({
@@ -94,27 +97,29 @@ export default function SignupPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSignup} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="first-name">First name</Label>
-              <Input 
-                id="first-name" 
-                placeholder="Max" 
-                required 
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                disabled={isLoading || isGoogleLoading}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="last-name">Last name</Label>
-              <Input 
-                id="last-name" 
-                placeholder="Robinson" 
-                required 
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                disabled={isLoading || isGoogleLoading}
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="first-name">First name</Label>
+                <Input 
+                  id="first-name" 
+                  placeholder="Max" 
+                  required 
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  disabled={isLoading || isGoogleLoading}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="last-name">Last name</Label>
+                <Input 
+                  id="last-name" 
+                  placeholder="Robinson" 
+                  required 
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  disabled={isLoading || isGoogleLoading}
+                />
+              </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>

@@ -36,7 +36,7 @@ export default function LoginPage() {
       console.error("Email/Password Login Error:", error);
       let description = 'An unexpected error occurred. Please try again.';
        if (error instanceof FirebaseError) {
-          if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+          if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
             description = 'Invalid email or password. Please try again.';
           } else if (error.code === 'auth/configuration-not-found') {
             description = 'Email/Password sign-in is not enabled in your Firebase project. Please enable it in the Firebase console.';
