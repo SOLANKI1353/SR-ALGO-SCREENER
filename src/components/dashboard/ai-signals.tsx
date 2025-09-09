@@ -1,8 +1,5 @@
 "use client"
 
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
 import { useState, useTransition } from "react"
 import {
   generateAISignalsFromIndicators,
@@ -17,48 +14,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
-import { Bot, Zap } from "lucide-react"
+import { Bot, Zap, TrendingUp, TrendingDown, Info } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-
-const formSchema = z.object({
-  ticker: z.string().min(1, "Ticker is required."),
-  movingAverage: z.coerce.number(),
-  relativeStrengthIndex: z.coerce.number().min(0).max(100),
-  macd: z.coerce.number(),
-  volume: z.coerce.number().min(0),
-})
+import { Skeleton } from "@/components/ui/skeleton"
 
 export function AiSignals() {
   const [isPending, startTransition] = useTransition()
   const [result, setResult] = useState<AISignalsFromIndicatorsOutput | null>(null)
   const [error, setError] = useState<string | null>(null)
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      ticker: "RELIANCE",
-      movingAverage: 2900,
-      relativeStrengthIndex: 65,
-      macd: 12.5,
-      volume: 8100000,
-    },
-  })
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function handleGenerate() {
     startTransition(async () => {
       setError(null)
       setResult(null)
       try {
-        const res = await generateAISignalsFromIndicators(values)
+        const res = await generateAISignalsFromIndicators()
         setResult(res)
       } catch (e) {
         setError("Failed to generate AI signal. Please try again.")
@@ -66,120 +36,108 @@ export function AiSignals() {
       }
     })
   }
-  
+
   const getSignalBadgeVariant = (signal: string | undefined) => {
-    switch(signal?.toLowerCase()){
-        case 'buy': return 'default';
-        case 'sell': return 'destructive';
-        default: return 'secondary';
+    switch (signal?.toLowerCase()) {
+      case "buy":
+        return "default"
+      case "sell":
+        return "destructive"
+      default:
+        return "secondary"
     }
   }
 
   return (
     <Card>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Bot /> AI Buy/Sell Signals (Demo)
-            </CardTitle>
-            <CardDescription>
-              Get AI-generated trading signals based on technical indicators.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-4 md:grid-cols-2">
-            <FormField
-              control={form.control}
-              name="ticker"
-              render={({ field }) => (
-                <FormItem className="md:col-span-2">
-                  <FormLabel>Ticker</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g. RELIANCE" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="movingAverage"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Moving Average</FormLabel>
-                  <FormControl>
-                    <Input type="number" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="relativeStrengthIndex"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>RSI</FormLabel>
-                  <FormControl>
-                    <Input type="number" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="macd"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>MACD</FormLabel>
-                  <FormControl>
-                    <Input type="number" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="volume"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Volume</FormLabel>
-                  <FormControl>
-                    <Input type="number" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </CardContent>
-          <CardFooter className="flex-col items-start gap-4">
-            <Button type="submit" disabled={isPending}>
-              <Zap className="mr-2 h-4 w-4" />
-              {isPending ? "Analyzing..." : "Generate Signal"}
-            </Button>
-            {isPending && <p className="text-sm text-muted-foreground">AI is thinking...</p>}
-            {result && (
-              <Card className="w-full bg-muted/50">
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span>AI Signal:</span>
-                    <Badge variant={getSignalBadgeVariant(result.signal)} className="text-lg px-3 py-1">
-                      {result.signal}
-                    </Badge>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm font-medium">Rationale:</p>
-                  <p className="text-sm text-muted-foreground">{result.rationale}</p>
-                </CardContent>
-              </Card>
-            )}
-            {error && <p className="text-sm text-destructive">{error}</p>}
-          </CardFooter>
-        </form>
-      </Form>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Bot /> AI Signal of the Day
+        </CardTitle>
+        <CardDescription>
+          Find a promising stock with AI analysis, including target and stop
+          loss.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Button onClick={handleGenerate} disabled={isPending} className="w-full">
+          <Zap className="mr-2 h-4 w-4" />
+          {isPending ? "Finding & Analyzing Stock..." : "Generate AI Signal of the Day"}
+        </Button>
+      </CardContent>
+      <CardFooter className="flex-col items-start gap-4">
+        {isPending && <SignalSkeleton />}
+        {result && (
+          <Card className="w-full bg-muted/50">
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <span>
+                  {result.ticker}
+                </span>
+                <Badge
+                  variant={getSignalBadgeVariant(result.signal)}
+                  className="text-lg px-3 py-1"
+                >
+                  {result.signal}
+                </Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <p className="text-sm font-medium flex items-center gap-1.5"><Info className="h-4 w-4" /> Rationale</p>
+                <p className="text-sm text-muted-foreground pl-6">{result.rationale}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="flex items-center gap-2">
+                    <TrendingDown className="h-5 w-5 text-red-500" />
+                    <div>
+                        <p className="text-muted-foreground">Stop Loss</p>
+                        <p className="font-semibold">₹{result.stopLoss.toLocaleString('en-IN')}</p>
+                    </div>
+                </div>
+                <div className="flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5 text-emerald-500" />
+                    <div>
+                        <p className="text-muted-foreground">Target Price</p>
+                        <p className="font-semibold">₹{result.targetPrice.toLocaleString('en-IN')}</p>
+                    </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+        {error && <p className="text-sm text-destructive">{error}</p>}
+      </CardFooter>
     </Card>
   )
+}
+
+
+function SignalSkeleton() {
+    return (
+        <Card className="w-full bg-muted/50">
+            <CardHeader>
+                <div className="flex justify-between items-center">
+                    <Skeleton className="h-6 w-24" />
+                    <Skeleton className="h-8 w-16" />
+                </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <div className="space-y-2">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-10 w-full" />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Skeleton className="h-4 w-20" />
+                        <Skeleton className="h-5 w-24" />
+                    </div>
+                    <div className="space-y-2">
+                        <Skeleton className="h-4 w-20" />
+                        <Skeleton className="h-5 w-24" />
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+    )
 }
