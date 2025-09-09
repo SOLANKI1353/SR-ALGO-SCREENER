@@ -1,5 +1,64 @@
 
+
 import { format, subDays, getDaysInMonth } from 'date-fns';
+
+export const marketOverviewData = [
+  {
+    name: 'NIFTY 50',
+    value: '24,250.50',
+    change: '+150.75',
+    changePercent: '+0.62%',
+    changeType: 'positive' as const,
+    chartData: [
+      { value: 24100 }, { value: 24150 }, { value: 24120 },
+      { value: 24200 }, { value: 24250 }, { value: 24230 }, { value: 24250.50 }
+    ],
+  },
+  {
+    name: 'SENSEX',
+    value: '79,890.10',
+    change: '+450.25',
+    changePercent: '+0.57%',
+    changeType: 'positive' as const,
+    chartData: [
+      { value: 79440 }, { value: 79500 }, { value: 79600 },
+      { value: 79750 }, { value: 79800 }, { value: 79850 }, { value: 79890.10 }
+    ],
+  },
+  {
+    name: 'NIFTY BANK',
+    value: '52,350.20',
+    change: '-120.40',
+    changePercent: '-0.23%',
+    changeType: 'negative' as const,
+    chartData: [
+      { value: 52470 }, { value: 52400 }, { value: 52450 },
+      { value: 52380 }, { value: 52300 }, { value: 52360 }, { value: 52350.20 }
+    ],
+  },
+  {
+    name: 'NIFTY IT',
+    value: '35,600.80',
+    change: '-250.60',
+    changePercent: '-0.70%',
+    changeType: 'negative' as const,
+    chartData: [
+      { value: 35850 }, { value: 35800 }, { value: 35750 },
+      { value: 35700 }, { value: 35650 }, { value: 35620 }, { value: 35600.80 }
+    ],
+  },
+   {
+    name: 'NIFTY MIDCAP 100',
+    value: '55,100.00',
+    change: '+300.00',
+    changePercent: '+0.55%',
+    changeType: 'positive' as const,
+    chartData: [
+      { value: 54800 }, { value: 54850 }, { value: 54900 },
+      { value: 55000 }, { value: 55050 }, { value: 55080 }, { value: 55100.00 }
+    ],
+  },
+];
 
 export const topMovers = {
   gainers: [
