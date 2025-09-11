@@ -1,7 +1,7 @@
 
 "use client"
 
-import { ResizablePanelGroup as ResizablePanelGroupPrimitive, ResizablePanel as ResizablePanelPrimitive, ResizableHandle as ResizableHandlePrimitive } from "react-resizable-panels"
+import { PanelGroup as ResizablePanelGroupPrimitive, Panel as ResizablePanelPrimitive, PanelResizeHandle as ResizableHandlePrimitive } from "react-resizable-panels"
 
 import { cn } from "@/lib/utils"
 
@@ -42,4 +42,6 @@ const ResizableHandle = ({
 )
 
 export { ResizablePanelGroup, ResizablePanel, ResizableHandle }
+
+
 
