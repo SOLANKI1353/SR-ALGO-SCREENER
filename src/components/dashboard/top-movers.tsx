@@ -8,6 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { topMovers as initialTopMovers } from "@/lib/data";
 import { ArrowUp, ArrowDown, Activity, TrendingUp, TrendingDown, Zap } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type Mover = {
     ticker: string;
@@ -62,12 +63,12 @@ export function TopMovers() {
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="gainers">
-          <TabsList className="grid w-full h-auto grid-cols-2 sm:grid-cols-3 md:grid-cols-6">
-            <TabsTrigger value="gainers"><ArrowUp className="mr-2 h-4 w-4" />Gainers</TabsTrigger>
-            <TabsTrigger value="losers"><ArrowDown className="mr-2 h-4 w-4" />Losers</TabsTrigger>
+          <TabsList className="h-auto flex-wrap justify-start">
+            <TabsTrigger value="gainers"><ArrowUp className="mr-2 h-4 w-4 text-emerald-500" />Gainers</TabsTrigger>
+            <TabsTrigger value="losers"><ArrowDown className="mr-2 h-4 w-4 text-red-500" />Losers</TabsTrigger>
             <TabsTrigger value="most-active"><Activity className="mr-2 h-4 w-4" />Most Active</TabsTrigger>
-            <TabsTrigger value="52w-high"><TrendingUp className="mr-2 h-4 w-4" />52W High</TabsTrigger>
-            <TabsTrigger value="52w-low"><TrendingDown className="mr-2 h-4 w-4" />52W Low</TabsTrigger>
+            <TabsTrigger value="52w-high"><TrendingUp className="mr-2 h-4 w-4 text-emerald-500" />52W High</TabsTrigger>
+            <TabsTrigger value="52w-low"><TrendingDown className="mr-2 h-4 w-4 text-red-500" />52W Low</TabsTrigger>
             <TabsTrigger value="volume-buzzers"><Zap className="mr-2 h-4 w-4" />Volume Buzzers</TabsTrigger>
           </TabsList>
           <TabsContent value="gainers">
@@ -123,7 +124,7 @@ function MoverTable({ data, showVolume = false, show52W = false, highOrLow = 'hi
                 </Link>
               </TableCell>
               <TableCell className="text-right">₹{stock.price.toFixed(2)}</TableCell>
-              <TableCell className={`text-right font-medium ${stock.change.startsWith('+') ? 'text-emerald-500' : 'text-red-500'}`}>{stock.change}</TableCell>
+              <TableCell className={cn('text-right font-medium', stock.change.startsWith('+') ? 'text-emerald-500' : 'text-red-500')}>{stock.change}</TableCell>
               {showVolume && <TableCell className="text-right">{stock.volume}</TableCell>}
               {show52W && highOrLow === 'high' && <TableCell className="text-right">₹{(stock as FiftyTwoWeekMover).high.toFixed(2)}</TableCell>}
               {show52W && highOrLow === 'low' && <TableCell className="text-right">₹{(stock as FiftyTwoWeekMover).low.toFixed(2)}</TableCell>}
