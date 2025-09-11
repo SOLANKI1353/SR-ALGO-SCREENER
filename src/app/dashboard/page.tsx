@@ -1,6 +1,5 @@
 
 import { TopMovers } from '@/components/dashboard/top-movers';
-import { Watchlist } from '@/components/dashboard/watchlist';
 import { Heatmap } from '@/components/dashboard/heatmap';
 import { AiSignals } from '@/components/dashboard/ai-signals';
 import { FiiDiiData } from '@/components/dashboard/fii-dii-data';
@@ -16,7 +15,7 @@ export default function DashboardPage() {
             <TopMovers />
             <Heatmap />
             <div className="md:col-span-2 lg:col-span-1">
-                <Watchlist />
+                 <AiSignals />
             </div>
         </div>
          <div className="lg:col-span-2">
@@ -24,7 +23,6 @@ export default function DashboardPage() {
         </div>
       </div>
       <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-1">
-        <AiSignals />
         <FiiDiiData />
       </div>
     </div>

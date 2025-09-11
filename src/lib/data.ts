@@ -101,12 +101,6 @@ export const topMovers = {
   ],
 };
 
-export const initialWatchlist = [
-  { ticker: "RELIANCE", price: 2950.80, change: "+1.2%", volume: "8.1M" },
-  { ticker: "INFY", price: 1650.45, change: "-0.5%", volume: "6.5M" },
-  { ticker: "HDFCBANK", price: 1520.60, change: "+0.8%", volume: "10.2M" },
-];
-
 export const heatmapData = [
   {
     name: "Financial Services",
@@ -416,3 +410,43 @@ export const fiiDiiData = (date: Date = new Date(), days?: number) => {
         stockFutures: generateDailyFlows(date, days)
     };
 };
+
+type Stock = {
+  ticker: string;
+  price: number;
+  change: string;
+  volume: string;
+};
+
+export const initialWatchlists: { [key: string]: Stock[] } = {
+    "My Watchlist": [
+        { ticker: "RELIANCE", price: 2950.80, change: "+1.2%", volume: "8.1M" },
+        { ticker: "INFY", price: 1650.45, change: "-0.5%", volume: "6.5M" },
+        { ticker: "HDFCBANK", price: 1520.60, change: "+0.8%", volume: "10.2M" },
+    ],
+    "NIFTY 50": [
+        { ticker: "RELIANCE", price: 2950.80, change: "+1.2%", volume: "8.1M" },
+        { ticker: "HDFCBANK", price: 1520.60, change: "+0.8%", volume: "10.2M" },
+        { ticker: "TCS", price: 3950.75, change: "+2.1%", volume: "4.5M" },
+    ]
+};
+
+export const allStocks: Stock[] = [
+    ...topMovers.gainers,
+    ...topMovers.losers,
+    ...topMovers.mostActive,
+    ...heatmapData.flatMap(s => s.stocks),
+    ...Object.values(initialWatchlists).flat()
+].reduce((acc, stock) => {
+    // Remove duplicates
+    if (!acc.find(s => s.ticker === stock.ticker)) {
+        acc.push({
+            ticker: stock.ticker,
+            price: stock.price,
+            change: stock.change,
+            volume: stock.volume || `${(Math.random() * 5).toFixed(1)}M`
+        });
+    }
+    return acc;
+}, [] as Stock[]);
+
