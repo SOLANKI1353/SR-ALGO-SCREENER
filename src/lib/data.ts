@@ -244,6 +244,69 @@ export const heatmapData = [
   }
 ];
 
+export const sectoralFlowData = {
+    topBuying: [
+        { 
+            name: "PSU Bank", 
+            value: 85,
+            stocks: [
+                { ticker: "SBIN", price: 830.4, change: "+1.5%" },
+                { ticker: "BANKBARODA", price: 280.0, change: "+3.1%" },
+                { ticker: "PNB", price: 125.0, change: "+2.5%" },
+                { ticker: "CANBK", price: 118.0, change: "+2.9%" },
+            ]
+        },
+        { 
+            name: "Metals", 
+            value: 78,
+            stocks: [
+                { ticker: "TATASTEEL", price: 175.0, change: "+3.5%" },
+                { ticker: "JSWSTEEL", price: 930.0, change: "+2.8%" },
+                { ticker: "HINDALCO", price: 680.0, change: "+4.1%" },
+            ]
+        },
+        { 
+            name: "Oil & Gas", 
+            value: 65,
+            stocks: [
+                { ticker: "RELIANCE", price: 2950.8, change: "+1.2%" },
+                { ticker: "BPCL", price: 635.2, change: "+4.2%" },
+                { ticker: "ONGC", price: 270.0, change: "+1.8%" },
+            ]
+        },
+    ],
+    topSelling: [
+        { 
+            name: "Pharma", 
+            value: 92,
+            stocks: [
+                { ticker: "SUNPHARMA", price: 1600.0, change: "-1.8%" },
+                { ticker: "CIPLA", price: 1495.3, change: "-3.2%" },
+                { ticker: "DRREDDY", price: 6200.1, change: "-2.8%" },
+            ]
+        },
+        { 
+            name: "FMCG", 
+            value: 75,
+            stocks: [
+                { ticker: "HINDUNILVR", price: 2450.0, change: "-0.9%" },
+                { ticker: "NESTLEIND", price: 2500.5, change: "-2.5%" },
+                { ticker: "ITC", price: 430.1, change: "-0.2%" },
+            ]
+        },
+        { 
+            name: "IT", 
+            value: 60,
+            stocks: [
+                { ticker: "INFY", price: 1650.45, change: "-0.5%" },
+                { ticker: "HCLTECH", price: 1440.0, change: "-1.1%" },
+                { ticker: "WIPRO", price: 475.6, change: "-1.5%" },
+            ]
+        },
+    ]
+};
+
+
 export const backtestingStrategies = [
     { id: 'rsi_ma', name: 'RSI & Moving Average Crossover', description: 'Buys when RSI is oversold and price crosses above 50-day MA.' },
     { id: 'macd_cross', name: 'MACD Crossover', description: 'Generates signals based on MACD line and signal line crossovers.' },
