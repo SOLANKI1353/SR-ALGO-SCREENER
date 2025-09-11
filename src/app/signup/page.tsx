@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Flame } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
+import { signUpWithEmail } from '@/lib/firebase';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -24,22 +25,36 @@ export default function SignupPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    if (firstName && lastName && email && password) {
-      // Simulate signup
-      setTimeout(() => {
-        toast({
-          title: 'Sign-up Successful',
-          description: 'Welcome! This is a simulated sign-up.',
-        });
-        router.push('/dashboard');
-        setIsLoading(false);
-      }, 1000);
-    } else {
+    if (!firstName || !lastName || !email || !password) {
         toast({
             variant: 'destructive',
             title: 'Sign-up Failed',
             description: 'Please fill out all fields.',
         });
+        setIsLoading(false);
+        return;
+    }
+    
+    try {
+        await signUpWithEmail(email, password);
+        toast({
+          title: 'Sign-up Successful',
+          description: 'Welcome! Your account has been created.',
+        });
+        router.push('/dashboard');
+    } catch (error: any) {
+        let description = "An unexpected error occurred. Please try again.";
+        if (error.code === 'auth/email-already-in-use') {
+            description = "This email is already in use. Please log in or use a different email.";
+        } else if (error.code === 'auth/weak-password') {
+            description = "The password is too weak. Please use a stronger password.";
+        }
+        toast({
+            variant: 'destructive',
+            title: 'Sign-up Failed',
+            description: description,
+        });
+    } finally {
         setIsLoading(false);
     }
   };

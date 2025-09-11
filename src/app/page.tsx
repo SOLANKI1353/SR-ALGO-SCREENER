@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Flame } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { signInWithEmail } from '@/lib/firebase';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -22,22 +23,34 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate login
-    if (email && password) {
-       setTimeout(() => {
-        toast({
-          title: 'Login Successful',
-          description: 'Welcome! This is a simulated login.',
-        });
-        router.push('/dashboard');
-        setIsLoading(false);
-      }, 1000);
-    } else {
+    if (!email || !password) {
         toast({
             variant: 'destructive',
             title: 'Login Failed',
             description: 'Please enter an email and password.',
         });
+        setIsLoading(false);
+        return;
+    }
+
+    try {
+        await signInWithEmail(email, password);
+        toast({
+            title: 'Login Successful',
+            description: 'Welcome back!',
+        });
+        router.push('/dashboard');
+    } catch (error: any) {
+        let description = "An unexpected error occurred. Please try again.";
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+            description = "Invalid email or password. Please check your credentials and try again.";
+        }
+        toast({
+            variant: 'destructive',
+            title: 'Login Failed',
+            description: description,
+        });
+    } finally {
         setIsLoading(false);
     }
   };
@@ -50,7 +63,7 @@ export default function LoginPage() {
             <Flame className="h-8 w-8 text-primary" />
             <CardTitle className="text-3xl font-bold">Sr Algo</CardTitle>
           </div>
-          <CardDescription>Enter any credentials to access the demo dashboard</CardDescription>
+          <CardDescription>Enter your credentials to access your dashboard</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
