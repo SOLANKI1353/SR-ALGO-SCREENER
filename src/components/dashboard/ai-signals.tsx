@@ -55,14 +55,14 @@ export function AiSignals() {
           <Bot /> AI Signal of the Day
         </CardTitle>
         <CardDescription>
-          Find a promising stock with AI analysis, including target and stop
+          Find a promising stock or option with AI analysis, including target and stop
           loss.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <Button onClick={handleGenerate} disabled={isPending} className="w-full">
           <Zap className="mr-2 h-4 w-4" />
-          {isPending ? "Finding & Analyzing Stock..." : "Generate AI Signal of the Day"}
+          {isPending ? "Finding & Analyzing..." : "Generate AI Signal"}
         </Button>
       </CardContent>
       <CardFooter className="flex-col items-start gap-4">

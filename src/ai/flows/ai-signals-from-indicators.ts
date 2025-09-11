@@ -1,11 +1,11 @@
 'use server';
 
 /**
- * @fileOverview AI-driven buy/sell signal generation for a stock of the day.
+ * @fileOverview AI-driven buy/sell signal generation for stocks and options.
  *
- * This file defines a Genkit flow that finds a promising stock and returns
+ * This file defines a Genkit flow that finds a promising stock or option and returns
  * AI-generated buy/sell signals, including stop loss and target price.
- * It uses an LLM to find a stock, interpret its indicators, and provide actionable insights.
+ * It uses an LLM to find a trading opportunity, interpret its indicators, and provide actionable insights.
  *
  * @file        ai-signals-from-indicators.ts
  * @exports   AISignalsFromIndicatorsOutput
@@ -19,7 +19,7 @@ import {z} from 'genkit';
  * Output schema for the AI signals generation flow.
  */
 const AISignalsFromIndicatorsOutputSchema = z.object({
-  ticker: z.string().describe('The ticker symbol of the stock that was analyzed.'),
+  ticker: z.string().describe('The ticker symbol of the stock or option that was analyzed (e.g., RELIANCE, NIFTY 24200 CE).'),
   signal: z
     .string()
     .describe(
@@ -34,7 +34,7 @@ const AISignalsFromIndicatorsOutputSchema = z.object({
 
 /**
  * @typedef {object} AISignalsFromIndicatorsOutput
- * @property {string} ticker - The ticker symbol of the analyzed stock.
+ * @property {string} ticker - The ticker symbol of the analyzed asset.
  * @property {string} signal - The AI-generated buy/sell signal.
  * @property {string} rationale - The rationale behind the signal.
  * @property {number} stopLoss - The recommended stop loss price.
@@ -45,7 +45,7 @@ export type AISignalsFromIndicatorsOutput = z.infer<
 >;
 
 /**
- * Generates AI buy/sell signals for a stock of the day.
+ * Generates AI buy/sell signals for a trading opportunity of the day.
  *
  * @returns {Promise<AISignalsFromIndicatorsOutput>} A promise that resolves to an object containing the AI-generated signal, rationale, stop loss, and target price.
  */
@@ -56,10 +56,10 @@ export async function generateAISignalsFromIndicators(): Promise<AISignalsFromIn
 const aiSignalsFromIndicatorsPrompt = ai.definePrompt({
   name: 'aiSignalsFromIndicatorsPrompt',
   output: {schema: AISignalsFromIndicatorsOutputSchema},
-  prompt: `You are an AI-powered financial analyst. Your task is to identify one promising stock from the Indian stock market (NSE/BSE) that is showing strong potential for a short-term trade today.
+  prompt: `You are an AI-powered financial analyst. Your task is to identify one promising trading opportunity from the Indian stock market (NSE/BSE). This could be a stock or a stock/index option.
 
-  1.  **Select a Stock**: Choose a well-known, liquid stock that is currently exhibiting interesting technical patterns (e.g., breakout, reversal, strong trend).
-  2.  **Analyze**: Briefly analyze the stock based on key technical indicators like Moving Averages, RSI, MACD, and recent volume.
+  1.  **Select an Asset**: Choose a well-known, liquid stock or a specific option contract (e.g., NIFTY 24500 CE, RELIANCE 3000 PE) that is currently exhibiting interesting technical patterns (e.g., breakout, reversal, strong trend, high open interest).
+  2.  **Analyze**: Briefly analyze the asset based on key technical indicators like Moving Averages, RSI, MACD, Volume, or Open Interest for options.
   3.  **Generate Signal**: Provide a clear buy, sell, or hold signal.
   4.  **Provide Rationale**: Explain your reasoning in 2-3 sentences.
   5.  **Set Levels**: Provide a specific 'stopLoss' price and a 'targetPrice'.
