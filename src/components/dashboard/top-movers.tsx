@@ -62,7 +62,7 @@ export function TopMovers() {
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="gainers">
-          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 h-auto">
+          <TabsList className="grid w-full h-auto grid-cols-2 sm:grid-cols-3 md:grid-cols-6">
             <TabsTrigger value="gainers"><ArrowUp className="mr-2 h-4 w-4" />Gainers</TabsTrigger>
             <TabsTrigger value="losers"><ArrowDown className="mr-2 h-4 w-4" />Losers</TabsTrigger>
             <TabsTrigger value="most-active"><Activity className="mr-2 h-4 w-4" />Most Active</TabsTrigger>
