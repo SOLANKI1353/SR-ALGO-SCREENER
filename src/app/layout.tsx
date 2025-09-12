@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/theme-provider';
+import { FirebaseProvider } from '@/components/firebase-provider';
 
 export const metadata: Metadata = {
   title: 'Sr Algo',
@@ -27,7 +28,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <FirebaseProvider>
+            {children}
+          </FirebaseProvider>
           <Toaster />
         </ThemeProvider>
       </body>

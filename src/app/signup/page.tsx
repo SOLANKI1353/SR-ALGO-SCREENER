@@ -10,11 +10,12 @@ import { Flame } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from '@/lib/firebase';
+import { useFirebase } from '@/components/firebase-provider';
 
 export default function SignupPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { auth } = useFirebase();
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,6 +25,16 @@ export default function SignupPage() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+
+    if (!auth) {
+        toast({
+            variant: 'destructive',
+            title: 'Firebase Not Initialized',
+            description: 'The authentication service is not ready. Please wait a moment and try again.',
+        });
+        setIsLoading(false);
+        return;
+    }
 
     if (!firstName || !lastName || !email || !password) {
         toast({
@@ -144,7 +155,7 @@ export default function SignupPage() {
                             disabled={isLoading}
                         />
                     </div>
-                    <Button type="submit" className="w-full" disabled={isLoading}>
+                    <Button type="submit" className="w-full" disabled={isLoading || !auth}>
                         {isLoading ? 'Creating Account...' : 'Create an account'}
                     </Button>
                 </form>
