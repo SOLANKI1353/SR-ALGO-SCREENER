@@ -16,11 +16,17 @@ import {
   Repeat,
   ScanSearch,
   Layers,
-  LineChart
+  LineChart,
+  Star,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Button } from "../ui/button"
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  onWatchlistClick: () => void;
+}
+
+export function AppSidebar({ onWatchlistClick }: AppSidebarProps) {
   const pathname = usePathname();
 
   const navItems = [
@@ -29,7 +35,10 @@ export function AppSidebar() {
     { href: "/dashboard/screeners", icon: ScanSearch, label: "Screeners" },
     { href: "/dashboard/options", icon: Layers, label: "Options" },
     { href: "/dashboard/backtesting", icon: Repeat, label: "Backtesting" },
-    { href: "/dashboard/settings", icon: Settings, label: "Settings", isBottom: true },
+  ]
+  
+  const bottomNavItems = [
+    { href: "/dashboard/settings", icon: Settings, label: "Settings" },
   ]
 
   return (
@@ -43,7 +52,7 @@ export function AppSidebar() {
           <span className="sr-only">Sr Algo</span>
         </Link>
         <TooltipProvider>
-            {navItems.filter(item => !item.isBottom).map(item => (
+            {navItems.map(item => (
                 <Tooltip key={item.href}>
                     <TooltipTrigger asChild>
                     <Link
@@ -59,11 +68,25 @@ export function AppSidebar() {
                     <TooltipContent side="right">{item.label}</TooltipContent>
                 </Tooltip>
             ))}
+             <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={onWatchlistClick}
+                        className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                    >
+                        <Star className="h-5 w-5" />
+                        <span className="sr-only">Watchlist</span>
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">Watchlist</TooltipContent>
+            </Tooltip>
         </TooltipProvider>
       </nav>
       <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
         <TooltipProvider>
-            {navItems.filter(item => item.isBottom).map(item => (
+            {bottomNavItems.map(item => (
                 <Tooltip key={item.href}>
                     <TooltipTrigger asChild>
                     <Link

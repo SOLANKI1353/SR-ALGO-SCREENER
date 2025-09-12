@@ -14,7 +14,8 @@ import {
   LayoutDashboard,
   ScanSearch,
   Layers,
-  LineChart
+  LineChart,
+  Star,
 } from "lucide-react"
 import { useTheme } from "next-themes"
 
@@ -36,7 +37,11 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useToast } from "@/hooks/use-toast"
 
-export function AppHeader() {
+interface AppHeaderProps {
+  onWatchlistClick: () => void;
+}
+
+export function AppHeader({ onWatchlistClick }: AppHeaderProps) {
   const { setTheme, theme } = useTheme()
   const { toast } = useToast();
 
@@ -93,6 +98,13 @@ export function AppHeader() {
               <Repeat className="h-5 w-5" />
               Backtesting
             </Link>
+             <button
+                onClick={onWatchlistClick}
+                className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+              >
+                <Star className="h-5 w-5" />
+                Watchlist
+              </button>
             <Link
               href="/dashboard/settings"
               className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
@@ -112,6 +124,16 @@ export function AppHeader() {
           className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
         />
       </div>
+
+       <Button
+        variant="ghost"
+        size="icon"
+        onClick={onWatchlistClick}
+        className="rounded-full hidden md:flex"
+      >
+        <Star className="h-5 w-5" />
+        <span className="sr-only">Toggle watchlist</span>
+      </Button>
 
       <Button
         variant="ghost"
@@ -153,7 +175,7 @@ export function AppHeader() {
           <DropdownMenuItem><Link href="/dashboard/settings">Settings</Link></DropdownMenuItem>
           <DropdownMenuItem>Support</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem asChild><Link href="/">Logout</Link></DropdownMenuItem>
+          <DropdownMenuItem><Link href="/">Logout</Link></DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>

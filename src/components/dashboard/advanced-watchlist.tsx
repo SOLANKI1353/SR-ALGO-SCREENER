@@ -91,7 +91,7 @@ export function AdvancedWatchlist() {
 
 
   return (
-    <div className="h-full flex flex-col border-l bg-background">
+    <div className="h-full flex flex-col bg-background">
       <CardHeader className="p-4 border-b">
         <CardTitle>Watchlist</CardTitle>
         <div className="relative mt-2">
