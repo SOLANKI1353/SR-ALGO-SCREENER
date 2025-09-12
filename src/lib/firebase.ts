@@ -1,6 +1,3 @@
-
-"use client"
-
 import { initializeApp, getApp, getApps, FirebaseOptions, FirebaseApp } from "firebase/app";
 import { getAuth, Auth } from "firebase/auth";
 
