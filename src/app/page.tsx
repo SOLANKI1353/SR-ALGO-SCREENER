@@ -34,6 +34,7 @@ export default function LoginPage() {
     }
 
     try {
+        // Correctly call signInWithEmailAndPassword with the auth object first.
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         if (userCredential.user) {
             toast({
@@ -55,7 +56,8 @@ export default function LoginPage() {
                 description = "The email address is not valid.";
                 break;
             case 'auth/configuration-not-found':
-                description = "FIREBASE CONFIGURATION IS MISSING. The application cannot connect to the authentication service.";
+            case 'auth/api-key-not-valid':
+                description = "FIREBASE CONFIGURATION IS MISSING OR INVALID. The application cannot connect to the authentication service.";
                 break;
             default:
                 console.error("Firebase login error:", error);
