@@ -411,42 +411,62 @@ export const fiiDiiData = (date: Date = new Date(), days?: number) => {
     };
 };
 
-type Stock = {
+export type SearchableInstrument = {
+  ticker: string;
+  name?: string;
+  price: number;
+  change: string;
+  volume: string;
+  exchange: 'NSE' | 'BSE' | 'INDEX';
+};
+
+const nseStocks: SearchableInstrument[] = [
+    { ticker: "RELIANCE", name: "Reliance Industries", price: 2950.80, change: "+1.2%", volume: "8.1M", exchange: "NSE" },
+    { ticker: "TCS", name: "Tata Consultancy Services", price: 3950.75, change: "+2.1%", volume: "4.5M", exchange: "NSE" },
+    { ticker: "HDFCBANK", name: "HDFC Bank", price: 1520.60, change: "+0.8%", volume: "10.2M", exchange: "NSE" },
+    { ticker: "INFY", name: "Infosys", price: 1650.45, change: "-0.5%", volume: "6.5M", exchange: "NSE" },
+    { ticker: "ICICIBANK", name: "ICICI Bank", price: 1150.25, change: "+2.1%", volume: "9.2M", exchange: "NSE" },
+    { ticker: "SBIN", name: "State Bank of India", price: 830.4, change: "+1.5%", volume: "12.3M", exchange: "NSE" },
+];
+
+const bseStocks: SearchableInstrument[] = [
+    { ticker: "BOMDYEING", name: "Bombay Dyeing", price: 180.20, change: "+3.2%", volume: "1.1M", exchange: "BSE" },
+    { ticker: "SPICEJET", name: "Spicejet Ltd", price: 65.50, change: "-1.8%", volume: "5.4M", exchange: "BSE" },
+    { ticker: "MRPL", name: "Mangalore Refinery", price: 220.90, change: "+5.0%", volume: "3.2M", exchange: "BSE" },
+];
+
+const allIndices: SearchableInstrument[] = [
+    { ticker: "NIFTY 50", name: "NIFTY 50", price: 24250.50, change: "+0.62%", volume: "N/A", exchange: "INDEX" },
+    { ticker: "SENSEX", name: "BSE SENSEX", price: 79890.10, change: "+0.57%", volume: "N/A", exchange: "INDEX" },
+    { ticker: "NIFTY BANK", name: "NIFTY Bank", price: 52350.20, change: "-0.23%", volume: "N/A", exchange: "INDEX" },
+    { ticker: "NIFTY IT", name: "NIFTY IT", price: 35600.80, change: "-0.70%", volume: "N/A", exchange: "INDEX" },
+];
+
+export const searchableInstruments: SearchableInstrument[] = [
+  ...nseStocks,
+  ...bseStocks,
+  ...allIndices
+];
+
+type WatchlistItem = {
   ticker: string;
   price: number;
   change: string;
   volume: string;
+  exchange: 'NSE' | 'BSE' | 'INDEX';
 };
 
-export const initialWatchlists: { [key: string]: Stock[] } = {
+export const initialWatchlists: { [key: string]: WatchlistItem[] } = {
     "My Watchlist": [
-        { ticker: "RELIANCE", price: 2950.80, change: "+1.2%", volume: "8.1M" },
-        { ticker: "INFY", price: 1650.45, change: "-0.5%", volume: "6.5M" },
-        { ticker: "HDFCBANK", price: 1520.60, change: "+0.8%", volume: "10.2M" },
+        { ticker: "RELIANCE", price: 2950.80, change: "+1.2%", volume: "8.1M", exchange: "NSE" },
+        { ticker: "INFY", price: 1650.45, change: "-0.5%", volume: "6.5M", exchange: "NSE" },
+        { ticker: "HDFCBANK", price: 1520.60, change: "+0.8%", volume: "10.2M", exchange: "NSE" },
     ],
     "NIFTY 50": [
-        { ticker: "RELIANCE", price: 2950.80, change: "+1.2%", volume: "8.1M" },
-        { ticker: "HDFCBANK", price: 1520.60, change: "+0.8%", volume: "10.2M" },
-        { ticker: "TCS", price: 3950.75, change: "+2.1%", volume: "4.5M" },
+        { ticker: "RELIANCE", price: 2950.80, change: "+1.2%", volume: "8.1M", exchange: "NSE" },
+        { ticker: "HDFCBANK", price: 1520.60, change: "+0.8%", volume: "10.2M", exchange: "NSE" },
+        { ticker: "TCS", price: 3950.75, change: "+2.1%", volume: "4.5M", exchange: "NSE" },
     ]
 };
 
-export const allStocks: Stock[] = [
-    ...topMovers.gainers,
-    ...topMovers.losers,
-    ...topMovers.mostActive,
-    ...heatmapData.flatMap(s => s.stocks),
-    ...Object.values(initialWatchlists).flat()
-].reduce((acc, stock) => {
-    // Remove duplicates
-    if (!acc.find(s => s.ticker === stock.ticker)) {
-        acc.push({
-            ticker: stock.ticker,
-            price: stock.price,
-            change: stock.change,
-            volume: stock.volume || `${(Math.random() * 5).toFixed(1)}M`
-        });
-    }
-    return acc;
-}, [] as Stock[]);
-
+    

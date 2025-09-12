@@ -9,15 +9,17 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Trash2, PlusCircle, Search, X } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { initialWatchlists, allStocks } from "@/lib/data";
+import { initialWatchlists, searchableInstruments, type SearchableInstrument } from "@/lib/data";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 type WatchlistItem = {
   ticker: string;
   price: number;
   change: string;
   volume: string;
+  exchange: 'NSE' | 'BSE' | 'INDEX';
 };
 
 // Function to generate a random update for a stock
@@ -54,28 +56,38 @@ export function AdvancedWatchlist() {
     return () => clearInterval(interval);
   }, []);
 
-  const filteredStocks = useMemo(() => {
+  const filteredInstruments = useMemo(() => {
     if (!searchQuery) return [];
-    const currentWatchlistTickers = new Set(watchlists[activeTab].map(s => s.ticker));
-    return allStocks
-      .filter(stock => stock.ticker.toLowerCase().includes(searchQuery.toLowerCase()))
-      .filter(stock => !currentWatchlistTickers.has(stock.ticker))
+    const currentWatchlistTickers = new Set(watchlists[activeTab].map(s => `${s.ticker}-${s.exchange}`));
+    return searchableInstruments
+      .filter(instrument => 
+        instrument.ticker.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        instrument.name?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      .filter(instrument => !currentWatchlistTickers.has(`${instrument.ticker}-${instrument.exchange}`))
       .slice(0, 50); // Limit results for performance
   }, [searchQuery, watchlists, activeTab]);
 
-  const handleAddStock = (stock: WatchlistItem) => {
+  const handleAddInstrument = (instrument: SearchableInstrument) => {
+    const newWatchlistItem: WatchlistItem = {
+        ticker: instrument.ticker,
+        price: instrument.price,
+        change: instrument.change,
+        volume: instrument.volume,
+        exchange: instrument.exchange
+    };
     setWatchlists(prev => ({
       ...prev,
-      [activeTab]: [...prev[activeTab], stock]
+      [activeTab]: [...prev[activeTab], newWatchlistItem]
     }));
     setSearchQuery("");
     setIsSearching(false);
   };
 
-  const handleRemoveStock = (ticker: string) => {
+  const handleRemoveStock = (ticker: string, exchange: string) => {
     setWatchlists(prev => ({
         ...prev,
-        [activeTab]: prev[activeTab].filter((stock) => stock.ticker !== ticker)
+        [activeTab]: prev[activeTab].filter((stock) => !(stock.ticker === ticker && stock.exchange === exchange))
     }));
   };
   
@@ -96,7 +108,7 @@ export function AdvancedWatchlist() {
         <div className="relative mt-2">
             <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input 
-                placeholder="Search to add stock..."
+                placeholder="Search NSE, BSE, Indices..."
                 className="pl-8"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -118,19 +130,25 @@ export function AdvancedWatchlist() {
                     <h3 className="text-sm font-semibold px-2 mb-1">Search Results</h3>
                      <Table>
                         <TableBody>
-                            {filteredStocks.length > 0 ? filteredStocks.map(stock => (
-                                <TableRow key={stock.ticker}>
-                                    <TableCell className="font-medium p-2">{stock.ticker}</TableCell>
+                            {filteredInstruments.length > 0 ? filteredInstruments.map(instrument => (
+                                <TableRow key={`${instrument.ticker}-${instrument.exchange}`}>
+                                    <TableCell className="font-medium p-2">
+                                      <div>{instrument.ticker}</div>
+                                      <div className="text-xs text-muted-foreground">{instrument.name}</div>
+                                    </TableCell>
+                                    <TableCell className="p-2">
+                                        <Badge variant="outline">{instrument.exchange}</Badge>
+                                    </TableCell>
                                     <TableCell className="text-right p-2">
-                                        <Button size="sm" variant="ghost" onClick={() => handleAddStock(stock)}>
+                                        <Button size="sm" variant="ghost" onClick={() => handleAddInstrument(instrument)}>
                                             <PlusCircle className="h-4 w-4" />
                                         </Button>
                                     </TableCell>
                                 </TableRow>
                             )) : (
                                 <TableRow>
-                                    <TableCell className="text-center text-muted-foreground p-4">
-                                        No stocks found.
+                                    <TableCell colSpan={3} className="text-center text-muted-foreground p-4">
+                                        No instruments found.
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -157,7 +175,7 @@ export function AdvancedWatchlist() {
   );
 }
 
-function WatchlistTable({ watchlist, onRemoveStock }: { watchlist: WatchlistItem[], onRemoveStock: (ticker: string) => void }) {
+function WatchlistTable({ watchlist, onRemoveStock }: { watchlist: WatchlistItem[], onRemoveStock: (ticker: string, exchange: string) => void }) {
     return (
         <Table>
             <TableHeader>
@@ -170,16 +188,17 @@ function WatchlistTable({ watchlist, onRemoveStock }: { watchlist: WatchlistItem
             </TableHeader>
             <TableBody>
               {watchlist.map((stock) => (
-                <TableRow key={stock.ticker}>
+                <TableRow key={`${stock.ticker}-${stock.exchange}`}>
                   <TableCell className="font-medium p-2">
-                     <Link href={`/dashboard/chart?symbol=NSE:${stock.ticker}`} className="hover:underline">
-                        {stock.ticker}
+                     <Link href={`/dashboard/chart?symbol=${stock.exchange}:${stock.ticker}`} className="hover:underline">
+                        <div>{stock.ticker}</div>
+                        <div className="text-xs text-muted-foreground">{stock.exchange}</div>
                     </Link>
                   </TableCell>
                   <TableCell className="text-right p-2">₹{stock.price.toFixed(2)}</TableCell>
                   <TableCell className={cn('text-right font-medium p-2', stock.change.startsWith('+') ? 'text-emerald-500' : 'text-red-500')}>{stock.change}</TableCell>
                   <TableCell className="text-right p-2">
-                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => onRemoveStock(stock.ticker)}>
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => onRemoveStock(stock.ticker, stock.exchange)}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </TableCell>
@@ -189,3 +208,5 @@ function WatchlistTable({ watchlist, onRemoveStock }: { watchlist: WatchlistItem
           </Table>
     )
 }
+
+    
