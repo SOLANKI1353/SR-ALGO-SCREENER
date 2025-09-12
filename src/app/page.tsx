@@ -34,12 +34,13 @@ export default function LoginPage() {
     }
 
     try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        await signInWithEmailAndPassword(auth, email, password);
         toast({
             title: 'Login Successful',
             description: 'Welcome back!',
         });
         router.push('/dashboard');
+        return; // <-- This is the fix.
     } catch (error: any) {
         let title = "Login Failed";
         let description = "An unexpected error occurred. Please try again.";
@@ -63,9 +64,10 @@ export default function LoginPage() {
                 title = "Network Error";
                 description = "Could not connect to Firebase. Please check your internet connection.";
                 break;
+            case 'auth/configuration-not-found':
             case 'auth/api-key-not-valid':
                  title = "FIREBASE CONFIGURATION ERROR";
-                 description = "The Firebase API Key is invalid. The application cannot connect to the authentication service.";
+                 description = "The Firebase configuration is invalid. The application cannot connect to the authentication service.";
                  break;
             default:
                 title = "An Unexpected Error Occurred";
