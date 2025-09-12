@@ -80,17 +80,6 @@ export const marketOverviewData = [
         { value: 6830 }, { value: 6810 }, { value: 6805 }, { value: 6800 }
     ],
   },
-  {
-    name: 'NIFTY IT',
-    value: '35,600.80',
-    change: '-250.60',
-    changePercent: '-0.70%',
-    changeType: 'negative' as const,
-    chartData: [
-      { value: 35850 }, { value: 35800 }, { value: 35750 },
-      { value: 35700 }, { value: 35650 }, { value: 35620 }, { value: 35600.80 }
-    ],
-  },
 ];
 
 export const topMovers = {
