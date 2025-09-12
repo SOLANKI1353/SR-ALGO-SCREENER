@@ -34,16 +34,29 @@ export default function LoginPage() {
     }
 
     try {
-        await signInWithEmail(email, password);
-        toast({
-            title: 'Login Successful',
-            description: 'Welcome back!',
-        });
-        router.push('/dashboard');
+        const userCredential = await signInWithEmail(email, password);
+        if (userCredential.user) {
+            toast({
+                title: 'Login Successful',
+                description: 'Welcome back!',
+            });
+            router.push('/dashboard');
+        }
     } catch (error: any) {
         let description = "An unexpected error occurred. Please try again.";
-        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-            description = "Invalid email or password. Please check your credentials and try again.";
+        // Firebase error codes for authentication
+        switch (error.code) {
+            case 'auth/user-not-found':
+            case 'auth/wrong-password':
+            case 'auth/invalid-credential':
+                description = "Invalid email or password. Please check your credentials and try again.";
+                break;
+            case 'auth/invalid-email':
+                description = "The email address is not valid.";
+                break;
+            default:
+                description = "An unexpected error occurred during login. Please try again later.";
+                break;
         }
         toast({
             variant: 'destructive',

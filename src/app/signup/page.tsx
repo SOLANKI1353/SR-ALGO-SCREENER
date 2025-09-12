@@ -36,18 +36,29 @@ export default function SignupPage() {
     }
     
     try {
-        await signUpWithEmail(email, password);
-        toast({
-          title: 'Sign-up Successful',
-          description: 'Welcome! Your account has been created.',
-        });
-        router.push('/dashboard');
+        const userCredential = await signUpWithEmail(email, password);
+        if (userCredential.user) {
+            toast({
+              title: 'Sign-up Successful',
+              description: 'Welcome! Your account has been created.',
+            });
+            router.push('/dashboard');
+        }
     } catch (error: any) {
         let description = "An unexpected error occurred. Please try again.";
-        if (error.code === 'auth/email-already-in-use') {
-            description = "This email is already in use. Please log in or use a different email.";
-        } else if (error.code === 'auth/weak-password') {
-            description = "The password is too weak. Please use a stronger password.";
+        switch (error.code) {
+            case 'auth/email-already-in-use':
+                description = "This email is already in use. Please log in or use a different email.";
+                break;
+            case 'auth/weak-password':
+                description = "The password is too weak. Please use a stronger password (at least 6 characters).";
+                break;
+            case 'auth/invalid-email':
+                description = "The email address is not valid.";
+                break;
+            default:
+                description = "An unexpected error occurred during sign-up. Please try again later.";
+                break;
         }
         toast({
             variant: 'destructive',
@@ -76,7 +87,7 @@ export default function SignupPage() {
                 <Label htmlFor="first-name">First name</Label>
                 <Input 
                   id="first-name" 
-                  placeholder="Max" 
+                  placeholder="Max" _
                   required 
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
@@ -110,12 +121,12 @@ export default function SignupPage() {
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <Input 
-                id="password" 
+                id="password" _
                 type="password"
                 placeholder="********"
                 required 
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => setPassword(e.g.target.value)}
                 disabled={isLoading}
               />
             </div>
