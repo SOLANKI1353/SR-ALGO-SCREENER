@@ -36,12 +36,13 @@ export default function SignupPage() {
     }
     
     try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await createUserWithEmailAndPassword(auth, email, password);
         toast({
           title: 'Sign-up Successful',
           description: 'Welcome! Your account has been created.',
         });
         router.push('/dashboard');
+        return; // <-- This is the fix.
     } catch (error: any) {
         let title = "Sign-up Failed";
         let description = "An unexpected error occurred. Please try again.";
@@ -59,9 +60,10 @@ export default function SignupPage() {
                 title = "Invalid Email Format";
                 description = "The email address is not formatted correctly.";
                 break;
-            case 'auth/api-key-not-valid':
+             case 'auth/configuration-not-found':
+             case 'auth/api-key-not-valid':
                  title = "FIREBASE CONFIGURATION ERROR";
-                 description = "The Firebase API Key is invalid. The application cannot connect to the authentication service.";
+                 description = "The Firebase configuration is invalid. The application cannot connect to the authentication service.";
                  break;
             default:
                 title = "An Unexpected Error Occurred";
