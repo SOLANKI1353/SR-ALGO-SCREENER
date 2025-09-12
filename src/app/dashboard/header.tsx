@@ -4,8 +4,6 @@
 import Link from "next/link"
 import {
   Bell,
-  Home,
-  LineChart,
   PanelLeft,
   Search,
   Settings,
@@ -15,7 +13,8 @@ import {
   Repeat,
   LayoutDashboard,
   ScanSearch,
-  Layers
+  Layers,
+  LineChart
 } from "lucide-react"
 import { useTheme } from "next-themes"
 
@@ -65,6 +64,13 @@ export function AppHeader() {
             >
               <LayoutDashboard className="h-5 w-5" />
               Dashboard
+            </Link>
+            <Link
+              href="/dashboard/chart"
+              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+            >
+              <LineChart className="h-5 w-5" />
+              Chart
             </Link>
             <Link
               href="/dashboard/screeners"
@@ -146,8 +152,6 @@ export function AppHeader() {
           <DropdownMenuSeparator />
           <DropdownMenuItem><Link href="/dashboard/settings">Settings</Link></DropdownMenuItem>
           <DropdownMenuItem>Support</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem asChild><Link href="/">Logout</Link></DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>
