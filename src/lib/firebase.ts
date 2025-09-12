@@ -7,6 +7,7 @@ import {
 } from "firebase/auth";
 
 // Your web app's Firebase configuration is read from environment variables.
+// These are exposed to the browser by Next.js.
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -16,20 +17,16 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Initialize Firebase
-let app: FirebaseApp;
-if (getApps().length === 0) {
-    app = initializeApp(firebaseConfig);
-} else {
-    app = getApp();
+// Initialize Firebase as a singleton
+function getFirebaseApp() {
+    if (getApps().length > 0) {
+        return getApp();
+    }
+    return initializeApp(firebaseConfig);
 }
 
+const app = getFirebaseApp();
 export const auth = getAuth(app);
 
-export const signUpWithEmail = (email, password) => {
-    return createUserWithEmailAndPassword(auth, email, password);
-};
-
-export const signInWithEmail = (email, password) => {
-    return signInWithEmailAndPassword(auth, email, password);
-};
+// Correctly export the functions from the 'firebase/auth' library
+export { createUserWithEmailAndPassword, signInWithEmailAndPassword };
