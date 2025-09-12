@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Flame } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
-import { createUserWithEmailAndPassword } from '@/lib/firebase';
+import { auth, createUserWithEmailAndPassword } from '@/lib/firebase';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -34,7 +34,7 @@ export default function SignupPage() {
     }
     
     try {
-        const userCredential = await createUserWithEmailAndPassword(email, password);
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         if (userCredential.user) {
             toast({
               title: 'Sign-up Successful',
