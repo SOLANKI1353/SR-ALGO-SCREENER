@@ -140,7 +140,7 @@ export default function SignupPage() {
                         placeholder="m@example.com"
                         required
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => setEmail(e.targe.value)}
                         disabled={isLoading}
                         />
                     </div>
@@ -155,7 +155,7 @@ export default function SignupPage() {
                             disabled={isLoading}
                         />
                     </div>
-                    <Button type="submit" className="w-full" disabled={isLoading || !auth}>
+                    <Button type="submit" className="w-full" disabled={isLoading}>
                         {isLoading ? 'Creating Account...' : 'Create an account'}
                     </Button>
                 </form>

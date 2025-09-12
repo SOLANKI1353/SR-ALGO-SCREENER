@@ -143,7 +143,7 @@ export default function LoginPage() {
                 disabled={isLoading}
               />
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading || !auth}>
+            <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? 'Logging in...' : 'Login'}
             </Button>
           </form>
