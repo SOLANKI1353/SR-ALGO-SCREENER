@@ -40,7 +40,7 @@ export default function LoginPage() {
             description: 'Welcome back!',
         });
         router.push('/dashboard');
-        return; // <-- This is the fix.
+        return;
     } catch (error: any) {
         let title = "Login Failed";
         let description = "An unexpected error occurred. Please try again.";

@@ -42,7 +42,7 @@ export default function SignupPage() {
           description: 'Welcome! Your account has been created.',
         });
         router.push('/dashboard');
-        return; // <-- This is the fix.
+        return;
     } catch (error: any) {
         let title = "Sign-up Failed";
         let description = "An unexpected error occurred. Please try again.";
