@@ -18,14 +18,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase as a singleton
-function getFirebaseApp() {
-    if (getApps().length > 0) {
-        return getApp();
-    }
-    return initializeApp(firebaseConfig);
-}
-
-const app = getFirebaseApp();
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 export const auth = getAuth(app);
 
 // Correctly export the functions from the 'firebase/auth' library
