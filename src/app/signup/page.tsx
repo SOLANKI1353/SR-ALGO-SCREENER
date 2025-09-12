@@ -57,7 +57,7 @@ export default function SignupPage() {
                 description = "The email address is not valid.";
                 break;
             case 'auth/configuration-not-found':
-                description = "Firebase configuration is missing. Please contact support.";
+                description = "FIREBASE CONFIGURATION IS MISSING. The application cannot connect to the authentication service.";
                 break;
             default:
                 console.error("Firebase signup error:", error);
