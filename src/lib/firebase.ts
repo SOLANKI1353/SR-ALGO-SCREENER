@@ -1,10 +1,6 @@
 
 import { initializeApp, getApp, getApps } from "firebase/app";
-import { 
-  getAuth, 
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword
-} from "firebase/auth";
+import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration is read from environment variables.
 // These are exposed to the browser by Next.js.
@@ -19,7 +15,6 @@ const firebaseConfig = {
 
 // Initialize Firebase as a singleton
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-export const auth = getAuth(app);
+const auth = getAuth(app);
 
-// Correctly export the functions from the 'firebase/auth' library
-export { createUserWithEmailAndPassword, signInWithEmailAndPassword };
+export { app, auth };

@@ -9,7 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Flame } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { auth, signInWithEmailAndPassword } from '@/lib/firebase';
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from '@/lib/firebase';
 
 export default function LoginPage() {
   const router = useRouter();
