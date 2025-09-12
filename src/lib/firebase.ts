@@ -1,3 +1,4 @@
+
 import { initializeApp, getApp, getApps, FirebaseOptions, FirebaseApp } from "firebase/app";
 import { getAuth, Auth } from "firebase/auth";
 
@@ -14,13 +15,7 @@ const firebaseConfig: FirebaseOptions = {
 };
 
 // Initialize Firebase as a singleton to avoid re-initialization.
-let app: FirebaseApp;
-if (getApps().length === 0) {
-  app = initializeApp(firebaseConfig);
-} else {
-  app = getApp();
-}
-
+const app: FirebaseApp = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const auth: Auth = getAuth(app);
 
 export { app, auth };
