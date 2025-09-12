@@ -16,7 +16,7 @@ const firebaseConfig: FirebaseOptions = {
 // This is a critical check. It ensures that the app will fail to build if the
 // environment variables are not set, preventing runtime errors.
 if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
-  throw new Error('Firebase configuration is missing in your .env file. Make sure you have NEXT_PUBLIC_FIREBASE_API_KEY and other required variables set.');
+  throw new Error('Firebase configuration is missing. Make sure you have NEXT_PUBLIC_FIREBASE_API_KEY and other required variables set in your .env file.');
 }
 
 // Initialize Firebase as a singleton to avoid re-initialization.
