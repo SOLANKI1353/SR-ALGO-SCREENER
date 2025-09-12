@@ -16,6 +16,7 @@ import {
   Layers,
   LineChart,
   Star,
+  BarChartHorizontal,
 } from "lucide-react"
 import { useTheme } from "next-themes"
 
@@ -97,6 +98,13 @@ export function AppHeader({ onWatchlistClick }: AppHeaderProps) {
             >
               <Repeat className="h-5 w-5" />
               Backtesting
+            </Link>
+             <Link
+              href="/dashboard/fibonacci-screener"
+              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+            >
+              <BarChartHorizontal className="h-5 w-5" />
+              Fibonacci Screener
             </Link>
              <button
                 onClick={onWatchlistClick}

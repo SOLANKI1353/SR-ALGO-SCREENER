@@ -18,6 +18,7 @@ import {
   Layers,
   LineChart,
   Star,
+  BarChartHorizontal,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "../ui/button"
@@ -35,6 +36,7 @@ export function AppSidebar({ onWatchlistClick }: AppSidebarProps) {
     { href: "/dashboard/screeners", icon: ScanSearch, label: "Screeners" },
     { href: "/dashboard/options", icon: Layers, label: "Options" },
     { href: "/dashboard/backtesting", icon: Repeat, label: "Backtesting" },
+    { href: "/dashboard/fibonacci-screener", icon: BarChartHorizontal, label: "Fibonacci Screener"},
   ]
   
   const bottomNavItems = [
