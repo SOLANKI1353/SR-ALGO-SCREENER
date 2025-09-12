@@ -384,7 +384,7 @@ export const advanceDeclineData = [
 ];
 
 
-const generateDailyFlows = (date: Date, days?: number) => {
+const generateDailyFlows = (date: Date, days: number) => {
     const dataPoints = days || 1;
     const startDate = days ? startOfToday() : date;
 
@@ -403,7 +403,7 @@ const generateDailyFlows = (date: Date, days?: number) => {
     return days ? generatedData.slice(0, days) : generatedData;
 };
 
-export const fiiDiiData = (date: Date = new Date(), days?: number) => {
+export const fiiDiiData = (date: Date = new Date(), days: number) => {
     return {
         cash: generateDailyFlows(date, days).map(d => ({...d, dii: parseFloat(((Math.random() - 0.48) * 6000).toFixed(2))})),
         indexFutures: generateDailyFlows(date, days),
@@ -431,6 +431,7 @@ const nseStocks: SearchableInstrument[] = [
     { ticker: "ITC", name: "ITC Ltd.", price: 430.1, change: "-0.2%", volume: "11.2M", exchange: "NSE" },
     { ticker: "LICI", name: "Life Insurance Corp", price: 990.0, change: "+1.8%", volume: "7.1M", exchange: "NSE" },
     { ticker: "ZOMATO", name: "Zomato Ltd", price: 185.5, change: "+3.3%", volume: "25.6M", exchange: "NSE" },
+    { ticker: "SHAKTIPUMP", name: "Shakti Pumps (India) Ltd.", price: 2850.0, change: "+4.5%", volume: "1.5M", exchange: "NSE" },
 ];
 
 const bseStocks: SearchableInstrument[] = [
