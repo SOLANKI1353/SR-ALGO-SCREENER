@@ -59,7 +59,7 @@ export default function LoginPage() {
                 break;
             default:
                 console.error("Firebase login error:", error);
-                description = "An unexpected error occurred during login. Please try again later.";
+                description = `An unexpected error occurred during login: ${error.message}`;
                 break;
         }
         toast({

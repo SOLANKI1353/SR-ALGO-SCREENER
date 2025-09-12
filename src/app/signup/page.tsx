@@ -61,7 +61,7 @@ export default function SignupPage() {
                 break;
             default:
                 console.error("Firebase signup error:", error);
-                description = "An unexpected error occurred during sign-up. Please try again later.";
+                description = `An unexpected error occurred during sign-up: ${error.message}`;
                 break;
         }
         toast({
