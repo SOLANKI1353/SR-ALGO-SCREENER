@@ -87,7 +87,7 @@ export default function SignupPage() {
                 <Label htmlFor="first-name">First name</Label>
                 <Input 
                   id="first-name" 
-                  placeholder="Max" _
+                  placeholder="Max" 
                   required 
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
@@ -121,12 +121,12 @@ export default function SignupPage() {
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <Input 
-                id="password" _
+                id="password" 
                 type="password"
                 placeholder="********"
                 required 
                 value={password}
-                onChange={(e) => setPassword(e.g.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading}
               />
             </div>
