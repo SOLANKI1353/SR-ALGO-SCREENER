@@ -427,12 +427,18 @@ const nseStocks: SearchableInstrument[] = [
     { ticker: "INFY", name: "Infosys", price: 1650.45, change: "-0.5%", volume: "6.5M", exchange: "NSE" },
     { ticker: "ICICIBANK", name: "ICICI Bank", price: 1150.25, change: "+2.1%", volume: "9.2M", exchange: "NSE" },
     { ticker: "SBIN", name: "State Bank of India", price: 830.4, change: "+1.5%", volume: "12.3M", exchange: "NSE" },
+    { ticker: "BHARTIARTL", name: "Bharti Airtel", price: 1400.0, change: "+0.9%", volume: "5.5M", exchange: "NSE" },
+    { ticker: "ITC", name: "ITC Ltd.", price: 430.1, change: "-0.2%", volume: "11.2M", exchange: "NSE" },
+    { ticker: "LICI", name: "Life Insurance Corp", price: 990.0, change: "+1.8%", volume: "7.1M", exchange: "NSE" },
+    { ticker: "ZOMATO", name: "Zomato Ltd", price: 185.5, change: "+3.3%", volume: "25.6M", exchange: "NSE" },
 ];
 
 const bseStocks: SearchableInstrument[] = [
     { ticker: "BOMDYEING", name: "Bombay Dyeing", price: 180.20, change: "+3.2%", volume: "1.1M", exchange: "BSE" },
     { ticker: "SPICEJET", name: "Spicejet Ltd", price: 65.50, change: "-1.8%", volume: "5.4M", exchange: "BSE" },
     { ticker: "MRPL", name: "Mangalore Refinery", price: 220.90, change: "+5.0%", volume: "3.2M", exchange: "BSE" },
+    { ticker: "IRCON", name: "Ircon International", price: 265.0, change: "+1.1%", volume: "4.8M", exchange: "BSE" },
+    { ticker: "HUDCO", name: "Housing & Urban Development", price: 270.0, change: "+2.4%", volume: "6.2M", exchange: "BSE" },
 ];
 
 const allIndices: SearchableInstrument[] = [
@@ -440,6 +446,8 @@ const allIndices: SearchableInstrument[] = [
     { ticker: "SENSEX", name: "BSE SENSEX", price: 79890.10, change: "+0.57%", volume: "N/A", exchange: "INDEX" },
     { ticker: "NIFTY BANK", name: "NIFTY Bank", price: 52350.20, change: "-0.23%", volume: "N/A", exchange: "INDEX" },
     { ticker: "NIFTY IT", name: "NIFTY IT", price: 35600.80, change: "-0.70%", volume: "N/A", exchange: "INDEX" },
+    { ticker: "NIFTY MIDCAP 100", name: "NIFTY Midcap 100", price: 55100.00, change: "+0.55%", volume: "N/A", exchange: "INDEX" },
+    { ticker: "NIFTY SMALLCAP 100", name: "NIFTY Smallcap 100", price: 18100.00, change: "+0.75%", volume: "N/A", exchange: "INDEX" },
 ];
 
 export const searchableInstruments: SearchableInstrument[] = [

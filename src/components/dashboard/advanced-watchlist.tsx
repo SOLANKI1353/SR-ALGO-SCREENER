@@ -4,15 +4,32 @@
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Trash2, PlusCircle, Search, X } from "lucide-react";
+import { Trash2, PlusCircle, Search, X, MoreVertical } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { initialWatchlists, searchableInstruments, type SearchableInstrument } from "@/lib/data";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { Label } from "../ui/label";
 
 type WatchlistItem = {
   ticker: string;
@@ -41,6 +58,8 @@ export function AdvancedWatchlist() {
   const [activeTab, setActiveTab] = useState(Object.keys(initialWatchlists)[0]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
+  const [newWatchlistName, setNewWatchlistName] = useState("");
+  const [isCreateAlertOpen, setIsCreateAlertOpen] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -58,7 +77,7 @@ export function AdvancedWatchlist() {
 
   const filteredInstruments = useMemo(() => {
     if (!searchQuery) return [];
-    const currentWatchlistTickers = new Set(watchlists[activeTab].map(s => `${s.ticker}-${s.exchange}`));
+    const currentWatchlistTickers = new Set(watchlists[activeTab]?.map(s => `${s.ticker}-${s.exchange}`) ?? []);
     return searchableInstruments
       .filter(instrument => 
         instrument.ticker.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -93,13 +112,37 @@ export function AdvancedWatchlist() {
   
   const handleFocus = () => setIsSearching(true);
   const handleBlur = () => {
-    // Delay blur to allow click on search results
     setTimeout(() => {
         if (!searchQuery) {
             setIsSearching(false)
         }
     }, 200);
   };
+
+  const handleCreateWatchlist = () => {
+    if (newWatchlistName && !watchlists[newWatchlistName]) {
+      setWatchlists(prev => ({ ...prev, [newWatchlistName]: [] }));
+      setActiveTab(newWatchlistName);
+      setNewWatchlistName("");
+      setIsCreateAlertOpen(false);
+    }
+  };
+
+  const handleDeleteWatchlist = (watchlistName: string) => {
+    setWatchlists(prev => {
+        const newWatchlists = {...prev};
+        delete newWatchlists[watchlistName];
+        
+        const remainingWatchlists = Object.keys(newWatchlists);
+        if(activeTab === watchlistName && remainingWatchlists.length > 0) {
+            setActiveTab(remainingWatchlists[0]);
+        } else if (remainingWatchlists.length === 0) {
+            // Maybe create a default one or show an empty state
+        }
+
+        return newWatchlists;
+    });
+  }
 
 
   return (
@@ -108,7 +151,7 @@ export function AdvancedWatchlist() {
         <div className="relative mt-2">
             <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input 
-                placeholder="Search NSE, BSE, Indices..."
+                placeholder="Search to add stocks..."
                 className="pl-8"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -131,7 +174,7 @@ export function AdvancedWatchlist() {
                      <Table>
                         <TableBody>
                             {filteredInstruments.length > 0 ? filteredInstruments.map(instrument => (
-                                <TableRow key={`${instrument.ticker}-${instrument.exchange}`}>
+                                <TableRow key={`${instrument.ticker}-${instrument.exchange}`} className="cursor-pointer" onClick={() => handleAddInstrument(instrument)}>
                                     <TableCell className="font-medium p-2">
                                       <div>{instrument.ticker}</div>
                                       <div className="text-xs text-muted-foreground">{instrument.name}</div>
@@ -140,9 +183,7 @@ export function AdvancedWatchlist() {
                                         <Badge variant="outline">{instrument.exchange}</Badge>
                                     </TableCell>
                                     <TableCell className="text-right p-2">
-                                        <Button size="sm" variant="ghost" onClick={() => handleAddInstrument(instrument)}>
-                                            <PlusCircle className="h-4 w-4" />
-                                        </Button>
+                                        <PlusCircle className="h-4 w-4 text-muted-foreground" />
                                     </TableCell>
                                 </TableRow>
                             )) : (
@@ -157,11 +198,40 @@ export function AdvancedWatchlist() {
                 </div>
             ) : (
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="p-2">
-                    <TabsList className="grid w-full grid-cols-2">
-                        {Object.keys(watchlists).map(listName => (
-                            <TabsTrigger key={listName} value={listName}>{listName}</TabsTrigger>
-                        ))}
-                    </TabsList>
+                    <div className="flex items-center">
+                        <TabsList className="grid w-full grid-cols-2">
+                            {Object.keys(watchlists).map(listName => (
+                                <TabsTrigger key={listName} value={listName}>{listName}</TabsTrigger>
+                            ))}
+                        </TabsList>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="ml-2">
+                                    <MoreVertical className="h-4 w-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                <DropdownMenuItem onClick={() => setIsCreateAlertOpen(true)}>Create New Watchlist</DropdownMenuItem>
+                                <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Delete Current Watchlist</DropdownMenuItem>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            This action cannot be undone. This will permanently delete your '{activeTab}' watchlist.
+                                        </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction onClick={() => handleDeleteWatchlist(activeTab)}>Delete</AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
                     {Object.keys(watchlists).map(listName => (
                         <TabsContent key={listName} value={listName}>
                             <WatchlistTable watchlist={watchlists[listName]} onRemoveStock={handleRemoveStock} />
@@ -171,11 +241,42 @@ export function AdvancedWatchlist() {
             )}
         </ScrollArea>
       </div>
+      <AlertDialog open={isCreateAlertOpen} onOpenChange={setIsCreateAlertOpen}>
+        <AlertDialogContent>
+            <AlertDialogHeader>
+            <AlertDialogTitle>Create New Watchlist</AlertDialogTitle>
+            <AlertDialogDescription>
+                Enter a name for your new watchlist.
+            </AlertDialogDescription>
+            </AlertDialogHeader>
+            <div className="grid gap-2 py-2">
+                <Label htmlFor="watchlist-name">Watchlist Name</Label>
+                <Input 
+                    id="watchlist-name" 
+                    value={newWatchlistName}
+                    onChange={(e) => setNewWatchlistName(e.target.value)}
+                    placeholder="e.g., 'My Favourites'"
+                />
+            </div>
+            <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setNewWatchlistName("")}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleCreateWatchlist}>Create</AlertDialogAction>
+            </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
 
 function WatchlistTable({ watchlist, onRemoveStock }: { watchlist: WatchlistItem[], onRemoveStock: (ticker: string, exchange: string) => void }) {
+    if (watchlist.length === 0) {
+        return (
+            <div className="text-center py-12 text-muted-foreground">
+                <p>This watchlist is empty.</p>
+                <p className="text-sm">Use the search bar to add stocks.</p>
+            </div>
+        )
+    }
     return (
         <Table>
             <TableHeader>
