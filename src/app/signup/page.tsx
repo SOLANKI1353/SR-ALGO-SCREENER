@@ -140,7 +140,7 @@ export default function SignupPage() {
                         placeholder="m@example.com"
                         required
                         value={email}
-                        onChange={(e) => setEmail(e.targe.value)}
+                        onChange={(e) => setEmail(e.target.value)}
                         disabled={isLoading}
                         />
                     </div>
