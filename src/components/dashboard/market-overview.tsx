@@ -25,11 +25,11 @@ export function MarketOverview() {
       <CardHeader>
         <CardTitle>Market Overview</CardTitle>
         <CardDescription>
-          Performance of major Indian indices at a glance.
+          Performance of major indices, commodities, and currencies at a glance.
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {marketOverviewData.map((index) => (
             <Card key={index.name} className="p-4">
               <div className="flex items-start justify-between">

@@ -37,6 +37,50 @@ export const marketOverviewData = [
     ],
   },
   {
+    name: 'USD/INR',
+    value: '83.55',
+    change: '+0.12',
+    changePercent: '+0.14%',
+    changeType: 'positive' as const,
+    chartData: [
+        { value: 83.43 }, { value: 83.45 }, { value: 83.50 },
+        { value: 83.48 }, { value: 83.52 }, { value: 83.55 }, { value: 83.55 }
+    ],
+  },
+  {
+    name: 'Gold (MCX)',
+    value: '72,500',
+    change: '-250',
+    changePercent: '-0.34%',
+    changeType: 'negative' as const,
+    chartData: [
+        { value: 72750 }, { value: 72600 }, { value: 72650 },
+        { value: 72550 }, { value: 72500 }, { value: 72520 }, { value: 72500 }
+    ],
+  },
+  {
+    name: 'Silver (MCX)',
+    value: '91,200',
+    change: '+800',
+    changePercent: '+0.88%',
+    changeType: 'positive' as const,
+    chartData: [
+        { value: 90400 }, { value: 90600 }, { value: 90800 },
+        { value: 90700 }, { value: 91000 }, { value: 91100 }, { value: 91200 }
+    ],
+  },
+  {
+    name: 'Crude Oil (MCX)',
+    value: '6,800',
+    change: '-50',
+    changePercent: '-0.73%',
+    changeType: 'negative' as const,
+    chartData: [
+        { value: 6850 }, { value: 6840 }, { value: 6820 },
+        { value: 6830 }, { value: 6810 }, { value: 6805 }, { value: 6800 }
+    ],
+  },
+  {
     name: 'NIFTY IT',
     value: '35,600.80',
     change: '-250.60',
@@ -45,17 +89,6 @@ export const marketOverviewData = [
     chartData: [
       { value: 35850 }, { value: 35800 }, { value: 35750 },
       { value: 35700 }, { value: 35650 }, { value: 35620 }, { value: 35600.80 }
-    ],
-  },
-   {
-    name: 'NIFTY MIDCAP 100',
-    value: '55,100.00',
-    change: '+300.00',
-    changePercent: '+0.55%',
-    changeType: 'positive' as const,
-    chartData: [
-      { value: 54800 }, { value: 54850 }, { value: 54900 },
-      { value: 55000 }, { value: 55050 }, { value: 55080 }, { value: 55100.00 }
     ],
   },
 ];
