@@ -55,6 +55,7 @@ export default function LoginPage() {
                 description = "The email address is not valid.";
                 break;
             default:
+                console.error("Firebase login error:", error);
                 description = "An unexpected error occurred during login. Please try again later.";
                 break;
         }

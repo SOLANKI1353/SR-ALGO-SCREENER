@@ -57,6 +57,7 @@ export default function SignupPage() {
                 description = "The email address is not valid.";
                 break;
             default:
+                console.error("Firebase signup error:", error);
                 description = "An unexpected error occurred during sign-up. Please try again later.";
                 break;
         }
