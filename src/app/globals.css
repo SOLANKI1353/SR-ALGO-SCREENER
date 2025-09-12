@@ -4,74 +4,74 @@
 
 @layer base {
   :root {
-    --background: 240 10% 98%;
-    --foreground: 210 29% 24%;
-    --card: 240 10% 98%;
-    --card-foreground: 210 29% 24%;
-    --popover: 240 10% 98%;
-    --popover-foreground: 210 29% 24%;
-    --primary: 207 68% 53%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 282 39% 53%;
-    --accent-foreground: 0 0% 98%;
+    --background: 0 0% 100%;
+    --foreground: 224 71.4% 4.1%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 71.4% 4.1%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71.4% 4.1%;
+    --primary: 262.1 83.3% 57.8%;
+    --primary-foreground: 210 20% 98%;
+    --secondary: 220 14.3% 95.9%;
+    --secondary-foreground: 220.9 39.3% 11%;
+    --muted: 220 14.3% 95.9%;
+    --muted-foreground: 220 8.9% 46.1%;
+    --accent: 302.1 83.3% 57.8%;
+    --accent-foreground: 210 20% 98%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 207 68% 53%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 262.1 83.3% 57.8%;
     --radius: 0.5rem;
-    --chart-1: 207 68% 53%;
-    --chart-2: 282 39% 53%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --chart-1: 262 83% 58%;
+    --chart-2: 302 83% 58%;
+    --chart-3: 210 83% 58%;
+    --chart-4: 172 83% 58%;
+    --chart-5: 42 83% 58%;
     --sidebar-background: 240 10% 99%;
     --sidebar-foreground: 210 29% 24%;
-    --sidebar-primary: 207 68% 53%;
+    --sidebar-primary: 262.1 83.3% 57.8%;
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 0 0% 94%;
     --sidebar-accent-foreground: 0 0% 9%;
     --sidebar-border: 0 0% 89.8%;
-    --sidebar-ring: 207 68% 53%;
+    --sidebar-ring: 262.1 83.3% 57.8%;
   }
 
   .dark {
-    --background: 210 29% 24%; /* #2c3e50 */
-    --foreground: 0 0% 98%;
-    --card: 210 29% 29%;
-    --card-foreground: 0 0% 98%;
-    --popover: 210 29% 24%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 207 68% 53%; /* #3498db */
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 29% 34%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 210 29% 34%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 282 39% 53%; /* #9b59b6 */
-    --accent-foreground: 0 0% 98%;
+    --background: 224 71.4% 4.1%;
+    --foreground: 210 20% 98%;
+    --card: 224 71.4% 4.1%;
+    --card-foreground: 210 20% 98%;
+    --popover: 224 71.4% 4.1%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 262.1 83.3% 57.8%;
+    --primary-foreground: 210 20% 98%;
+    --secondary: 215 27.9% 16.9%;
+    --secondary-foreground: 210 20% 98%;
+    --muted: 215 27.9% 16.9%;
+    --muted-foreground: 217.9 10.6% 64.9%;
+    --accent: 302.1 83.3% 57.8%;
+    --accent-foreground: 210 20% 98%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 210 29% 35%;
-    --input: 210 29% 35%;
-    --ring: 207 68% 53%;
-    --chart-1: 207 68% 53%;
-    --chart-2: 282 39% 53%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --sidebar-background: 210 29% 20%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 215 27.9% 16.9%;
+    --input: 215 27.9% 16.9%;
+    --ring: 262.1 83.3% 57.8%;
+    --chart-1: 262 83% 58%;
+    --chart-2: 302 83% 58%;
+    --chart-3: 210 83% 58%;
+    --chart-4: 172 83% 58%;
+    --chart-5: 42 83% 58%;
+    --sidebar-background: 210 29% 12%;
     --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 207 68% 53%;
+    --sidebar-primary: 262.1 83.3% 57.8%;
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 210 29% 27%;
+    --sidebar-accent: 210 29% 17%;
     --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 210 29% 35%;
-    --sidebar-ring: 207 68% 53%;
+    --sidebar-border: 210 29% 25%;
+    --sidebar-ring: 262.1 83.3% 57.8%;
   }
 }
 

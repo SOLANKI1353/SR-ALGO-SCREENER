@@ -1,5 +1,5 @@
 
-import { initializeApp, getApp, getApps } from "firebase/app";
+import { initializeApp, getApp, getApps, FirebaseApp } from "firebase/app";
 import { 
   getAuth, 
   createUserWithEmailAndPassword,
@@ -17,7 +17,13 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+let app: FirebaseApp;
+if (getApps().length === 0) {
+    app = initializeApp(firebaseConfig);
+} else {
+    app = getApp();
+}
+
 export const auth = getAuth(app);
 
 export const signUpWithEmail = (email, password) => {
