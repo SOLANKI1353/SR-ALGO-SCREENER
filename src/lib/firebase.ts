@@ -7,19 +7,14 @@ import { getAuth, Auth } from "firebase/auth";
 // The Firebase configuration is hardcoded here to bypass persistent
 // environment variable loading issues in the development environment.
 const firebaseConfig: FirebaseOptions = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  "projectId": "algosight",
+  "appId": "1:258840598313:web:3a3642006a29c3b53b8938",
+  "storageBucket": "algosight.firebasestorage.app",
+  "apiKey": "AIzaSyA71E4GziA-CuL5OjD-HznsmuEC-kvQttk",
+  "authDomain": "algosight.firebaseapp.com",
+  "measurementId": "",
+  "messagingSenderId": "258840598313"
 };
-
-// This is a critical check. It ensures that the app will fail to build if the
-// configuration is missing, preventing runtime errors.
-if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
-  throw new Error('Firebase configuration is missing. Make sure you have the correct values hardcoded in src/lib/firebase.ts');
-}
 
 // Initialize Firebase as a singleton to avoid re-initialization.
 let app: FirebaseApp;
