@@ -26,47 +26,56 @@ export default function LoginPage() {
     if (!email || !password) {
         toast({
             variant: 'destructive',
-            title: 'Login Failed',
-            description: 'Please enter an email and password.',
+            title: 'Missing Fields',
+            description: 'Please enter both email and password.',
         });
         setIsLoading(false);
         return;
     }
 
     try {
-        // Correctly call signInWithEmailAndPassword with the auth object first.
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        if (userCredential.user) {
-            toast({
-                title: 'Login Successful',
-                description: 'Welcome back!',
-            });
-            router.push('/dashboard');
-        }
+        toast({
+            title: 'Login Successful',
+            description: 'Welcome back!',
+        });
+        router.push('/dashboard');
     } catch (error: any) {
+        let title = "Login Failed";
         let description = "An unexpected error occurred. Please try again.";
-        // Firebase error codes for authentication
+
         switch (error.code) {
             case 'auth/user-not-found':
             case 'auth/wrong-password':
             case 'auth/invalid-credential':
-                description = "Invalid email or password. Please check your credentials and try again.";
+                title = "Invalid Credentials";
+                description = "The email or password you entered is incorrect. Please check and try again.";
                 break;
             case 'auth/invalid-email':
-                description = "The email address is not valid.";
+                title = "Invalid Email Format";
+                description = "The email address is not formatted correctly.";
                 break;
-            case 'auth/configuration-not-found':
+            case 'auth/too-many-requests':
+                title = "Too Many Attempts";
+                description = "Access to this account has been temporarily disabled due to many failed login attempts. You can reset your password or try again later.";
+                break;
+            case 'auth/network-request-failed':
+                title = "Network Error";
+                description = "Could not connect to Firebase. Please check your internet connection.";
+                break;
             case 'auth/api-key-not-valid':
-                description = "FIREBASE CONFIGURATION IS MISSING OR INVALID. The application cannot connect to the authentication service.";
-                break;
+                 title = "FIREBASE CONFIGURATION ERROR";
+                 description = "The Firebase API Key is invalid. The application cannot connect to the authentication service.";
+                 break;
             default:
+                title = "An Unexpected Error Occurred";
+                description = `Error: ${error.code} - ${error.message}`;
                 console.error("Firebase login error:", error);
-                description = `An unexpected error occurred during login: ${error.message}`;
                 break;
         }
         toast({
             variant: 'destructive',
-            title: 'Login Failed',
+            title: title,
             description: description,
         });
     } finally {

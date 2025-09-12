@@ -28,7 +28,7 @@ export default function SignupPage() {
     if (!firstName || !lastName || !email || !password) {
         toast({
             variant: 'destructive',
-            title: 'Sign-up Failed',
+            title: 'Missing Fields',
             description: 'Please fill out all fields.',
         });
         setIsLoading(false);
@@ -36,39 +36,42 @@ export default function SignupPage() {
     }
     
     try {
-        // Correctly call createUserWithEmailAndPassword with the auth object first.
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        if (userCredential.user) {
-            toast({
-              title: 'Sign-up Successful',
-              description: 'Welcome! Your account has been created.',
-            });
-            router.push('/dashboard');
-        }
+        toast({
+          title: 'Sign-up Successful',
+          description: 'Welcome! Your account has been created.',
+        });
+        router.push('/dashboard');
     } catch (error: any) {
+        let title = "Sign-up Failed";
         let description = "An unexpected error occurred. Please try again.";
+
         switch (error.code) {
             case 'auth/email-already-in-use':
-                description = "This email is already in use. Please log in or use a different email.";
+                title = "Email Already In Use";
+                description = "This email is already registered. Please log in or use a different email.";
                 break;
             case 'auth/weak-password':
+                title = "Weak Password";
                 description = "The password is too weak. Please use a stronger password (at least 6 characters).";
                 break;
             case 'auth/invalid-email':
-                description = "The email address is not valid.";
+                title = "Invalid Email Format";
+                description = "The email address is not formatted correctly.";
                 break;
-            case 'auth/configuration-not-found':
             case 'auth/api-key-not-valid':
-                description = "FIREBASE CONFIGURATION IS MISSING OR INVALID. The application cannot connect to the authentication service.";
-                break;
+                 title = "FIREBASE CONFIGURATION ERROR";
+                 description = "The Firebase API Key is invalid. The application cannot connect to the authentication service.";
+                 break;
             default:
+                title = "An Unexpected Error Occurred";
+                description = `Error: ${error.code} - ${error.message}`;
                 console.error("Firebase signup error:", error);
-                description = `An unexpected error occurred during sign-up: ${error.message}`;
                 break;
         }
         toast({
             variant: 'destructive',
-            title: 'Sign-up Failed',
+            title: title,
             description: description,
         });
     } finally {
