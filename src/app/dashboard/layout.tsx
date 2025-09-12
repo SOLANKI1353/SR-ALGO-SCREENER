@@ -6,7 +6,8 @@ import { useState } from 'react';
 import { AppSidebar } from '@/components/dashboard/sidebar';
 import { AppHeader } from '@/components/dashboard/header';
 import { AdvancedWatchlist } from '@/components/dashboard/advanced-watchlist';
-import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { cn } from '@/lib/utils';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [isWatchlistOpen, setIsWatchlistOpen] = useState(false);
@@ -22,6 +23,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       </div>
       <Sheet open={isWatchlistOpen} onOpenChange={setIsWatchlistOpen}>
         <SheetContent className="p-0 w-full sm:max-w-md" side="right">
+           <SheetHeader className='p-4 border-b'>
+            <SheetTitle>Watchlist</SheetTitle>
+          </SheetHeader>
           <AdvancedWatchlist />
         </SheetContent>
       </Sheet>

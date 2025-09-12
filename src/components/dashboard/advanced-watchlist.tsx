@@ -92,8 +92,7 @@ export function AdvancedWatchlist() {
 
   return (
     <div className="h-full flex flex-col bg-background">
-      <CardHeader className="p-4 border-b">
-        <CardTitle>Watchlist</CardTitle>
+      <div className="p-4 border-b">
         <div className="relative mt-2">
             <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input 
@@ -110,7 +109,7 @@ export function AdvancedWatchlist() {
                 </Button>
             )}
         </div>
-      </CardHeader>
+      </div>
       
       <div className="flex-1 min-h-0 relative">
         <ScrollArea className="h-full">
