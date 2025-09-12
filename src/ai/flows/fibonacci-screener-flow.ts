@@ -37,10 +37,10 @@ const fibonacciScreenerPrompt = ai.definePrompt({
   2.  **Analyze the Pattern**: Identify the recent major swing high and swing low used for the Fibonacci drawing. Note the current price's position relative to the identified Fibonacci level.
   3.  **Generate Signal**: Based on the price action at the Fibonacci level, provide a clear 'BUY' (if bouncing off support) or 'SELL' (if getting rejected at resistance) signal.
   4.  **Provide Details**:
-      *   State the specific `fibonacciLevel` (e.g., "Bouncing off 61.8% Retracement").
-      *   Provide a concise `rationale` explaining the setup.
-      *   Set a logical `stopLoss` just below the Fibonacci support (for a buy) or just above the resistance (for a sell).
-      *   Set a `targetPrice`, which could be the next Fibonacci level or the previous swing high/low.
+      *   State the specific \`fibonacciLevel\` (e.g., "Bouncing off 61.8% Retracement").
+      *   Provide a concise \`rationale\` explaining the setup.
+      *   Set a logical \`stopLoss\` just below the Fibonacci support (for a buy) or just above the resistance (for a sell).
+      *   Set a \`targetPrice\`, which could be the next Fibonacci level or the previous swing high/low.
 
   Your response must be structured and only contain the requested information in the output schema.
   `,
