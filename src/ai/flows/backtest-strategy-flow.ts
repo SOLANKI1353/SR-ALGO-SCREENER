@@ -13,7 +13,7 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
+import { z } from 'zod';
 import { backtestingStrategies } from '@/lib/data';
 
 /**
@@ -27,6 +27,7 @@ const BacktestStrategyInputSchema = z.object({
     from: z.string().describe('The start date for the backtest (ISO 8601 format).'),
     to: z.string().describe('The end date for the backtest (ISO 8601 format).'),
   }),
+  strategyDescription: z.string().optional().describe('The description of the strategy being tested.'),
 });
 export type BacktestStrategyInput = z.infer<typeof BacktestStrategyInputSchema>;
 
