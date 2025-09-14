@@ -1,12 +1,12 @@
 
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { optionChainData } from "@/lib/data"
+import { optionChainData as initialOptionChainData, generateOptionsData } from "@/lib/data"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
 
@@ -26,19 +26,35 @@ type OptionsData = {
 export function OptionChain() {
   const [symbol, setSymbol] = useState("NIFTY")
   const [inputSymbol, setInputSymbol] = useState("NIFTY")
-  const [data, setData] = useState<OptionsData | null>(optionChainData[symbol as keyof typeof optionChainData]?.options ?? null)
-  const [underlyingPrice, setUnderlyingPrice] = useState<number | null>(optionChainData[symbol as keyof typeof optionChainData]?.underlyingPrice ?? null)
-  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState<OptionsData | null>(null)
+  const [underlyingPrice, setUnderlyingPrice] = useState<number | null>(null)
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Generate initial data on client-side to prevent hydration mismatch
+    const result = initialOptionChainData[symbol as keyof typeof initialOptionChainData];
+    if (result) {
+        setData({
+            calls: generateOptionsData(result.underlyingPrice, true),
+            puts: generateOptionsData(result.underlyingPrice, false)
+        });
+        setUnderlyingPrice(result.underlyingPrice);
+    }
+    setIsLoading(false);
+  }, []); // Run only once on mount
 
   const handleSearch = () => {
     setIsLoading(true);
     const upperSymbol = inputSymbol.toUpperCase();
     // Simulate API call
     setTimeout(() => {
-        const result = optionChainData[upperSymbol as keyof typeof optionChainData];
+        const result = initialOptionChainData[upperSymbol as keyof typeof initialOptionChainData];
         if (result) {
             setSymbol(upperSymbol);
-            setData(result.options);
+            setData({
+                calls: generateOptionsData(result.underlyingPrice, true),
+                puts: generateOptionsData(result.underlyingPrice, false)
+            });
             setUnderlyingPrice(result.underlyingPrice);
         } else {
             setData(null);
@@ -80,9 +96,9 @@ export function OptionChain() {
         </div>
       </CardHeader>
       <CardContent>
-        {isLoading ? (
+        {isLoading || !data ? (
             <OptionChainSkeleton />
-        ) : !data ? (
+        ) : !data.calls.length ? (
             <div className="text-center py-12 text-muted-foreground">
                 <p>No data found for symbol "{inputSymbol.toUpperCase()}".</p>
                 <p className="text-sm">Try NIFTY, BANKNIFTY, or RELIANCE.</p>
@@ -155,3 +171,5 @@ function OptionChainSkeleton() {
         </div>
     )
 }
+
+    
