@@ -14,21 +14,28 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import { Bot, Zap, TrendingUp, TrendingDown, Info } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Label } from "../ui/label"
 
 export function AiSignals() {
   const [isPending, startTransition] = useTransition()
+  const [ticker, setTicker] = useState("RELIANCE")
   const [result, setResult] = useState<AISignalsFromIndicatorsOutput | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   function handleGenerate() {
+    if (!ticker) {
+        setError("Please enter a stock ticker.");
+        return;
+    }
     startTransition(async () => {
       setError(null)
       setResult(null)
       try {
-        const res = await generateAISignalsFromIndicators()
+        const res = await generateAISignalsFromIndicators({ ticker })
         setResult(res)
       } catch (e) {
         setError("Failed to generate AI signal. Please try again.")
@@ -52,17 +59,25 @@ export function AiSignals() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Bot /> AI Signal of the Day
+          <Bot /> Custom AI Signal
         </CardTitle>
         <CardDescription>
-          Find a promising stock or option with AI analysis, including target and stop
-          loss.
+          Enter a stock ticker to get an AI-generated analysis, including target and stop loss.
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <Button onClick={handleGenerate} disabled={isPending} className="w-full">
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
+            <Label htmlFor="ticker-input">Stock Ticker</Label>
+            <Input 
+                id="ticker-input"
+                placeholder="e.g. RELIANCE, NIFTY 24200 CE"
+                value={ticker}
+                onChange={(e) => setTicker(e.target.value.toUpperCase())}
+            />
+        </div>
+        <Button onClick={handleGenerate} disabled={isPending || !ticker} className="w-full">
           <Zap className="mr-2 h-4 w-4" />
-          {isPending ? "Finding & Analyzing..." : "Generate AI Signal"}
+          {isPending ? "Analyzing..." : "Generate AI Signal"}
         </Button>
       </CardContent>
       <CardFooter className="flex-col items-start gap-4">
