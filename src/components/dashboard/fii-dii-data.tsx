@@ -72,7 +72,7 @@ export function FiiDiiData() {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
 
-  const fetchData = (date?: Date, days?: number) => {
+  const fetchData = (date: Date = new Date(), days?: number) => {
       setIsLoading(true);
       // Simulate API call
       setTimeout(() => {
@@ -143,3 +143,5 @@ export function FiiDiiData() {
     </Card>
   )
 }
+
+    
