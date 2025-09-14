@@ -23,6 +23,15 @@ type FiftyTwoWeekMover = Mover & {
   low: number;
 };
 
+type TopMoversData = {
+    gainers: Mover[];
+    losers: Mover[];
+    mostActive: Mover[];
+    fiftyTwoWeekHigh: FiftyTwoWeekMover[];
+    fiftyTwoWeekLow: FiftyTwoWeekMover[];
+    volumeBuzzers: Mover[];
+}
+
 // Function to generate a random update for a stock
 const generateRandomUpdate = (stock: Mover): Mover => {
     const priceChange = (Math.random() - 0.49) * (stock.price * 0.01);
@@ -38,7 +47,7 @@ const generateRandomUpdate = (stock: Mover): Mover => {
 }
 
 export function TopMovers() {
-  const [movers, setMovers] = useState(initialTopMovers);
+  const [movers, setMovers] = useState<TopMoversData>(initialTopMovers);
 
   useEffect(() => {
       const interval = setInterval(() => {
