@@ -1,13 +1,14 @@
 'use server';
 
 /**
- * @fileOverview AI-driven buy/sell signal generation for stocks and options.
+ * @fileOverview AI-driven buy/sell signal generation for a specific stock or option.
  *
- * This file defines a Genkit flow that finds a promising stock or option and returns
+ * This file defines a Genkit flow that takes a ticker symbol and returns
  * AI-generated buy/sell signals, including stop loss and target price.
- * It uses an LLM to find a trading opportunity, interpret its indicators, and provide actionable insights.
+ * It uses an LLM to interpret technical indicators and provide actionable insights for the given asset.
  *
  * @file        ai-signals-from-indicators.ts
+ * @exports   AISignalsFromIndicatorsInput
  * @exports   AISignalsFromIndicatorsOutput
  * @exports   generateAISignalsFromIndicators
  */
@@ -16,10 +17,19 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 /**
+ * Input schema for the AI signals generation flow.
+ */
+const AISignalsFromIndicatorsInputSchema = z.object({
+  ticker: z.string().describe('The ticker symbol of the stock or option to analyze (e.g., RELIANCE, NIFTY 24200 CE).'),
+});
+export type AISignalsFromIndicatorsInput = z.infer<typeof AISignalsFromIndicatorsInputSchema>;
+
+
+/**
  * Output schema for the AI signals generation flow.
  */
 const AISignalsFromIndicatorsOutputSchema = z.object({
-  ticker: z.string().describe('The ticker symbol of the stock or option that was analyzed (e.g., RELIANCE, NIFTY 24200 CE).'),
+  ticker: z.string().describe('The ticker symbol of the stock or option that was analyzed.'),
   signal: z
     .string()
     .describe(
@@ -45,35 +55,41 @@ export type AISignalsFromIndicatorsOutput = z.infer<
 >;
 
 /**
- * Generates AI buy/sell signals for a trading opportunity of the day.
+ * Generates AI buy/sell signals for a given stock or option ticker.
  *
+ * @param {AISignalsFromIndicatorsInput} input - The ticker to analyze.
  * @returns {Promise<AISignalsFromIndicatorsOutput>} A promise that resolves to an object containing the AI-generated signal, rationale, stop loss, and target price.
  */
-export async function generateAISignalsFromIndicators(): Promise<AISignalsFromIndicatorsOutput> {
-  return aiSignalsFromIndicatorsFlow();
+export async function generateAISignalsFromIndicators(input: AISignalsFromIndicatorsInput): Promise<AISignalsFromIndicatorsOutput> {
+  return aiSignalsFromIndicatorsFlow(input);
 }
 
 const aiSignalsFromIndicatorsPrompt = ai.definePrompt({
   name: 'aiSignalsFromIndicatorsPrompt',
-  output: {schema: AISignalsFromIndicatorsOutputSchema},
-  prompt: `You are an AI-powered financial analyst. Your task is to identify one promising trading opportunity from the Indian stock market (NSE/BSE). This could be a stock or a stock/index option.
+  input: { schema: AISignalsFromIndicatorsInputSchema },
+  output: { schema: AISignalsFromIndicatorsOutputSchema },
+  prompt: `You are an AI-powered financial analyst. Your task is to analyze the provided Indian stock market asset and generate a trading signal.
 
-  1.  **Select an Asset**: Choose a well-known, liquid stock or a specific option contract (e.g., NIFTY 24500 CE, RELIANCE 3000 PE) that is currently exhibiting interesting technical patterns (e.g., breakout, reversal, strong trend, high open interest).
-  2.  **Analyze**: Briefly analyze the asset based on key technical indicators like Moving Averages, RSI, MACD, Volume, or Open Interest for options.
-  3.  **Generate Signal**: Provide a clear buy, sell, or hold signal.
-  4.  **Provide Rationale**: Explain your reasoning in 2-3 sentences.
-  5.  **Set Levels**: Provide a specific 'stopLoss' price and a 'targetPrice'.
+  **Asset to Analyze**: {{{ticker}}}
 
-  Your response must be structured and only contain the requested information. Do not add any extra commentary.`,
+  1.  **Analyze**: Briefly analyze the asset based on key technical indicators like Moving Averages, RSI, MACD, Volume, or Open Interest for options.
+  2.  **Generate Signal**: Provide a clear buy, sell, or hold signal.
+  3.  **Provide Rationale**: Explain your reasoning in 2-3 sentences.
+  4.  **Set Levels**: Provide a specific 'stopLoss' price and a 'targetPrice'.
+
+  Your response must be structured and only contain the requested information. Do not add any extra commentary.
+  Ensure the 'ticker' field in your output exactly matches the asset you were asked to analyze.
+  `,
 });
 
 const aiSignalsFromIndicatorsFlow = ai.defineFlow(
   {
     name: 'aiSignalsFromIndicatorsFlow',
+    inputSchema: AISignalsFromIndicatorsInputSchema,
     outputSchema: AISignalsFromIndicatorsOutputSchema,
   },
-  async () => {
-    const {output} = await aiSignalsFromIndicatorsPrompt();
+  async (input) => {
+    const {output} = await aiSignalsFromIndicatorsPrompt(input);
     return output!;
   }
 );
